@@ -1,0 +1,1252 @@
+/* ===============================================
+   REUSABLE COMPONENT STYLES
+   =============================================== */
+
+/* Button Components */
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-primary {
+  @apply btn bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply btn bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 border-gray-300;
+}
+
+.btn-outline {
+  @apply btn border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-500;
+}
+
+.btn-success {
+  @apply btn bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-lg hover:shadow-xl;
+}
+
+.btn-warning {
+  @apply btn bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500 shadow-lg hover:shadow-xl;
+}
+
+.btn-danger {
+  @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-lg hover:shadow-xl;
+}
+
+.btn-ghost {
+  @apply btn bg-transparent border-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+}
+
+.btn-lg {
+  @apply px-8 py-3 text-base rounded-lg;
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-xs rounded;
+}
+
+.btn-xs {
+  @apply px-2 py-1 text-xs rounded;
+}
+
+.btn-icon {
+  @apply p-2 rounded-lg;
+}
+
+.btn-floating {
+  @apply fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-xl z-50;
+}
+
+/* Form Components */
+.form-input {
+  @apply block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white;
+}
+
+.form-input-error {
+  @apply form-input border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50;
+}
+
+.form-input-success {
+  @apply form-input border-green-300 focus:ring-green-500 focus:border-green-500 bg-green-50;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.form-label-required::after {
+  content: '*';
+  @apply text-red-500 ml-1;
+}
+
+.form-error {
+  @apply text-sm text-red-600 mt-1 flex items-center;
+}
+
+.form-success {
+  @apply text-sm text-green-600 mt-1 flex items-center;
+}
+
+.form-help {
+  @apply text-sm text-gray-500 mt-1;
+}
+
+.form-group {
+  @apply space-y-1 mb-4;
+}
+
+.form-group-horizontal {
+  @apply flex items-center space-x-4 mb-4;
+}
+
+.form-group-horizontal .form-label {
+  @apply mb-0 min-w-fit;
+}
+
+.form-textarea {
+  @apply form-input resize-none;
+}
+
+.form-select {
+  @apply form-input appearance-none bg-white;
+}
+
+.form-checkbox {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors;
+}
+
+.form-radio {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 transition-colors;
+}
+
+.form-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.form-switch.enabled {
+  @apply bg-blue-600;
+}
+
+.form-switch.disabled {
+  @apply bg-gray-200;
+}
+
+.form-switch-handle {
+  @apply inline-block h-4 w-4 transform rounded-full bg-white transition;
+}
+
+.form-switch.enabled .form-switch-handle {
+  @apply translate-x-6;
+}
+
+.form-switch.disabled .form-switch-handle {
+  @apply translate-x-1;
+}
+
+/* Card Components */
+.card {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden;
+}
+
+.card-flat {
+  @apply card shadow-none border-2;
+}
+
+.card-elevated {
+  @apply card shadow-2xl;
+}
+
+.card-gradient {
+  @apply card bg-gradient-to-br from-white to-gray-50;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-100 bg-gray-50;
+}
+
+.card-body {
+  @apply px-6 py-4;
+}
+
+.card-footer {
+  @apply px-6 py-4 border-t border-gray-100 bg-gray-50;
+}
+
+.card-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.card-subtitle {
+  @apply text-sm text-gray-600 mb-4;
+}
+
+.card-text {
+  @apply text-gray-700 leading-relaxed;
+}
+
+/* Loading Components */
+.spinner {
+  @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+}
+
+.spinner-lg {
+  @apply w-8 h-8 border-4;
+}
+
+.spinner-xl {
+  @apply w-12 h-12 border-4;
+}
+
+.loading-overlay {
+  @apply absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50;
+}
+
+.loading-skeleton {
+  @apply bg-gray-200 rounded animate-pulse;
+}
+
+.loading-skeleton-text {
+  @apply loading-skeleton h-4 mb-2;
+}
+
+.loading-skeleton-title {
+  @apply loading-skeleton h-6 mb-4;
+}
+
+.loading-skeleton-avatar {
+  @apply loading-skeleton w-12 h-12 rounded-full;
+}
+
+.loading-skeleton-button {
+  @apply loading-skeleton h-10 w-24 rounded-md;
+}
+
+/* Alert Components */
+.alert {
+  @apply px-4 py-3 rounded-lg border flex items-start space-x-3;
+}
+
+.alert-success {
+  @apply alert bg-green-50 border-green-200 text-green-800;
+}
+
+.alert-error {
+  @apply alert bg-red-50 border-red-200 text-red-800;
+}
+
+.alert-warning {
+  @apply alert bg-yellow-50 border-yellow-200 text-yellow-800;
+}
+
+.alert-info {
+  @apply alert bg-blue-50 border-blue-200 text-blue-800;
+}
+
+.alert-icon {
+  @apply w-5 h-5 flex-shrink-0 mt-0.5;
+}
+
+.alert-content {
+  @apply flex-1;
+}
+
+.alert-title {
+  @apply font-medium mb-1;
+}
+
+.alert-message {
+  @apply text-sm;
+}
+
+.alert-close {
+  @apply ml-auto pl-3;
+}
+
+.alert-close-btn {
+  @apply inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors;
+}
+
+/* Badge Components */
+.badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply badge bg-blue-100 text-blue-800;
+}
+
+.badge-secondary {
+  @apply badge bg-gray-100 text-gray-800;
+}
+
+.badge-success {
+  @apply badge bg-green-100 text-green-800;
+}
+
+.badge-warning {
+  @apply badge bg-yellow-100 text-yellow-800;
+}
+
+.badge-danger {
+  @apply badge bg-red-100 text-red-800;
+}
+
+.badge-lg {
+  @apply px-3 py-1 text-sm;
+}
+
+.badge-dot {
+  @apply w-2 h-2 rounded-full mr-1;
+}
+
+/* Modal Components */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.modal-content {
+  @apply bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto;
+}
+
+.modal-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.modal-title {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.modal-close {
+  @apply absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors;
+}
+
+.modal-body {
+  @apply px-6 py-4;
+}
+
+.modal-footer {
+  @apply px-6 py-4 border-t border-gray-200 flex justify-end space-x-3;
+}
+
+/* Navigation Components */
+.nav-link {
+  @apply text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200;
+}
+
+.nav-link-active {
+  @apply nav-link text-blue-600 bg-blue-50;
+}
+
+.nav-link-disabled {
+  @apply nav-link text-gray-400 cursor-not-allowed hover:text-gray-400;
+}
+
+.nav-divider {
+  @apply border-l border-gray-300 mx-4 self-stretch;
+}
+
+.breadcrumb {
+  @apply flex items-center space-x-2 text-sm text-gray-600;
+}
+
+.breadcrumb-item {
+  @apply hover:text-blue-600 transition-colors;
+}
+
+.breadcrumb-separator {
+  @apply text-gray-400;
+}
+
+.breadcrumb-current {
+  @apply text-gray-900 font-medium;
+}
+
+/* Table Components */
+.table {
+  @apply w-full divide-y divide-gray-200;
+}
+
+.table-header {
+  @apply bg-gray-50;
+}
+
+.table-th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.table-row {
+  @apply bg-white hover:bg-gray-50 transition-colors;
+}
+
+.table-row-selected {
+  @apply table-row bg-blue-50;
+}
+
+.table-td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+.table-actions {
+  @apply flex items-center space-x-2;
+}
+
+/* Tooltip Components */
+.tooltip {
+  @apply relative inline-block;
+}
+
+.tooltip-content {
+  @apply absolute z-10 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300;
+}
+
+.tooltip:hover .tooltip-content {
+  @apply opacity-100 pointer-events-auto;
+}
+
+.tooltip-top .tooltip-content {
+  @apply bottom-full left-1/2 transform -translate-x-1/2 mb-2;
+}
+
+.tooltip-bottom .tooltip-content {
+  @apply top-full left-1/2 transform -translate-x-1/2 mt-2;
+}
+
+.tooltip-left .tooltip-content {
+  @apply right-full top-1/2 transform -translate-y-1/2 mr-2;
+}
+
+.tooltip-right .tooltip-content {
+  @apply left-full top-1/2 transform -translate-y-1/2 ml-2;
+}
+
+/* Dropdown Components */
+.dropdown {
+  @apply relative inline-block;
+}
+
+.dropdown-content {
+  @apply absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none;
+}
+
+.dropdown-item {
+  @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors;
+}
+
+.dropdown-item-active {
+  @apply dropdown-item bg-blue-100 text-blue-900;
+}
+
+.dropdown-item-disabled {
+  @apply dropdown-item text-gray-400 cursor-not-allowed hover:bg-white hover:text-gray-400;
+}
+
+.dropdown-divider {
+  @apply border-t border-gray-100 my-1;
+}
+
+/* Progress Components */
+.progress {
+  @apply w-full bg-gray-200 rounded-full h-2;
+}
+
+.progress-bar {
+  @apply bg-blue-600 h-2 rounded-full transition-all duration-300;
+}
+
+.progress-bar-success {
+  @apply progress-bar bg-green-600;
+}
+
+.progress-bar-warning {
+  @apply progress-bar bg-yellow-500;
+}
+
+.progress-bar-danger {
+  @apply progress-bar bg-red-600;
+}
+
+.progress-lg {
+  @apply progress h-4;
+}
+
+.progress-lg .progress-bar {
+  @apply h-4;
+}
+
+/* Avatar Components */
+.avatar {
+  @apply inline-flex items-center justify-center rounded-full bg-gray-300 overflow-hidden;
+}
+
+.avatar-xs {
+  @apply avatar w-6 h-6 text-xs;
+}
+
+.avatar-sm {
+  @apply avatar w-8 h-8 text-sm;
+}
+
+.avatar-md {
+  @apply avatar w-12 h-12 text-base;
+}
+
+.avatar-lg {
+  @apply avatar w-16 h-16 text-lg;
+}
+
+.avatar-xl {
+  @apply avatar w-20 h-20 text-xl;
+}
+
+.avatar-img {
+  @apply w-full h-full object-cover;
+}
+
+.avatar-initials {
+  @apply font-medium text-white;
+}
+
+.avatar-status {
+  @apply absolute -bottom-0.5 -right-0.5 block h-3 w-3 rounded-full ring-2 ring-white;
+}
+
+.avatar-status-online {
+  @apply avatar-status bg-green-400;
+}
+
+.avatar-status-offline {
+  @apply avatar-status bg-gray-400;
+}
+
+.avatar-status-busy {
+  @apply avatar-status bg-red-400;
+}
+
+.avatar-status-away {
+  @apply avatar-status bg-yellow-400;
+}
+
+/* Utility Classes */
+.hover-lift {
+  @apply transition-transform duration-200 hover:-translate-y-1;
+}
+
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}
+
+.hover-glow {
+  transition: box-shadow 0.2s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.focus-ring-inset {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+}
+
+.gradient-bg {
+  @apply bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800;
+}
+
+.glass {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.glass-dark {
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+.animate-bounce-soft {
+  animation: bounceSoft 2s infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceSoft {
+  0%, 100% {
+    transform: translateY(-5%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ===============================================
+/* ===============================================
+   REUSABLE COMPONENT STYLES
+   =============================================== */
+
+/* Button Components */
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-primary {
+  @apply btn bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply btn bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 border-gray-300;
+}
+
+.btn-outline {
+  @apply btn border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-500;
+}
+
+.btn-success {
+  @apply btn bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-lg hover:shadow-xl;
+}
+
+.btn-warning {
+  @apply btn bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500 shadow-lg hover:shadow-xl;
+}
+
+.btn-danger {
+  @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-lg hover:shadow-xl;
+}
+
+.btn-ghost {
+  @apply btn bg-transparent border-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+}
+
+.btn-lg {
+  @apply px-8 py-3 text-base rounded-lg;
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-xs rounded;
+}
+
+.btn-xs {
+  @apply px-2 py-1 text-xs rounded;
+}
+
+.btn-icon {
+  @apply p-2 rounded-lg;
+}
+
+.btn-floating {
+  @apply fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-xl z-50;
+}
+
+/* Form Components */
+.form-input {
+  @apply block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white;
+}
+
+.form-input-error {
+  @apply form-input border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50;
+}
+
+.form-input-success {
+  @apply form-input border-green-300 focus:ring-green-500 focus:border-green-500 bg-green-50;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.form-label-required::after {
+  content: '*';
+  @apply text-red-500 ml-1;
+}
+
+.form-error {
+  @apply text-sm text-red-600 mt-1 flex items-center;
+}
+
+.form-success {
+  @apply text-sm text-green-600 mt-1 flex items-center;
+}
+
+.form-help {
+  @apply text-sm text-gray-500 mt-1;
+}
+
+.form-group {
+  @apply space-y-1 mb-4;
+}
+
+.form-group-horizontal {
+  @apply flex items-center space-x-4 mb-4;
+}
+
+.form-group-horizontal .form-label {
+  @apply mb-0 min-w-fit;
+}
+
+.form-textarea {
+  @apply form-input resize-none;
+}
+
+.form-select {
+  @apply form-input appearance-none bg-white;
+}
+
+.form-checkbox {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors;
+}
+
+.form-radio {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 transition-colors;
+}
+
+.form-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.form-switch.enabled {
+  @apply bg-blue-600;
+}
+
+.form-switch.disabled {
+  @apply bg-gray-200;
+}
+
+.form-switch-handle {
+  @apply inline-block h-4 w-4 transform rounded-full bg-white transition;
+}
+
+.form-switch.enabled .form-switch-handle {
+  @apply translate-x-6;
+}
+
+.form-switch.disabled .form-switch-handle {
+  @apply translate-x-1;
+}
+
+/* Card Components */
+.card {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden;
+}
+
+.card-flat {
+  @apply card shadow-none border-2;
+}
+
+.card-elevated {
+  @apply card shadow-2xl;
+}
+
+.card-gradient {
+  @apply card bg-gradient-to-br from-white to-gray-50;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-100 bg-gray-50;
+}
+
+.card-body {
+  @apply px-6 py-4;
+}
+
+.card-footer {
+  @apply px-6 py-4 border-t border-gray-100 bg-gray-50;
+}
+
+.card-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.card-subtitle {
+  @apply text-sm text-gray-600 mb-4;
+}
+
+.card-text {
+  @apply text-gray-700 leading-relaxed;
+}
+
+/* Loading Components */
+.spinner {
+  @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+}
+
+.spinner-lg {
+  @apply w-8 h-8 border-4;
+}
+
+.spinner-xl {
+  @apply w-12 h-12 border-4;
+}
+
+.loading-overlay {
+  @apply absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50;
+}
+
+.loading-skeleton {
+  @apply bg-gray-200 rounded animate-pulse;
+}
+
+.loading-skeleton-text {
+  @apply loading-skeleton h-4 mb-2;
+}
+
+.loading-skeleton-title {
+  @apply loading-skeleton h-6 mb-4;
+}
+
+.loading-skeleton-avatar {
+  @apply loading-skeleton w-12 h-12 rounded-full;
+}
+
+.loading-skeleton-button {
+  @apply loading-skeleton h-10 w-24 rounded-md;
+}
+
+/* Alert Components */
+.alert {
+  @apply px-4 py-3 rounded-lg border flex items-start space-x-3;
+}
+
+.alert-success {
+  @apply alert bg-green-50 border-green-200 text-green-800;
+}
+
+.alert-error {
+  @apply alert bg-red-50 border-red-200 text-red-800;
+}
+
+.alert-warning {
+  @apply alert bg-yellow-50 border-yellow-200 text-yellow-800;
+}
+
+.alert-info {
+  @apply alert bg-blue-50 border-blue-200 text-blue-800;
+}
+
+.alert-icon {
+  @apply w-5 h-5 flex-shrink-0 mt-0.5;
+}
+
+.alert-content {
+  @apply flex-1;
+}
+
+.alert-title {
+  @apply font-medium mb-1;
+}
+
+.alert-message {
+  @apply text-sm;
+}
+
+.alert-close {
+  @apply ml-auto pl-3;
+}
+
+.alert-close-btn {
+  @apply inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors;
+}
+
+/* Badge Components */
+.badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply badge bg-blue-100 text-blue-800;
+}
+
+.badge-secondary {
+  @apply badge bg-gray-100 text-gray-800;
+}
+
+.badge-success {
+  @apply badge bg-green-100 text-green-800;
+}
+
+.badge-warning {
+  @apply badge bg-yellow-100 text-yellow-800;
+}
+
+.badge-danger {
+  @apply badge bg-red-100 text-red-800;
+}
+
+.badge-lg {
+  @apply px-3 py-1 text-sm;
+}
+
+.badge-dot {
+  @apply w-2 h-2 rounded-full mr-1;
+}
+
+/* Modal Components */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.modal-content {
+  @apply bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto;
+}
+
+.modal-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.modal-title {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.modal-close {
+  @apply absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors;
+}
+
+.modal-body {
+  @apply px-6 py-4;
+}
+
+.modal-footer {
+  @apply px-6 py-4 border-t border-gray-200 flex justify-end space-x-3;
+}
+
+/* Navigation Components */
+.nav-link {
+  @apply text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200;
+}
+
+.nav-link-active {
+  @apply nav-link text-blue-600 bg-blue-50;
+}
+
+.nav-link-disabled {
+  @apply nav-link text-gray-400 cursor-not-allowed hover:text-gray-400;
+}
+
+.nav-divider {
+  @apply border-l border-gray-300 mx-4 self-stretch;
+}
+
+.breadcrumb {
+  @apply flex items-center space-x-2 text-sm text-gray-600;
+}
+
+.breadcrumb-item {
+  @apply hover:text-blue-600 transition-colors;
+}
+
+.breadcrumb-separator {
+  @apply text-gray-400;
+}
+
+.breadcrumb-current {
+  @apply text-gray-900 font-medium;
+}
+
+/* Table Components */
+.table {
+  @apply w-full divide-y divide-gray-200;
+}
+
+.table-header {
+  @apply bg-gray-50;
+}
+
+.table-th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.table-row {
+  @apply bg-white hover:bg-gray-50 transition-colors;
+}
+
+.table-row-selected {
+  @apply table-row bg-blue-50;
+}
+
+.table-td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+.table-actions {
+  @apply flex items-center space-x-2;
+}
+
+/* Tooltip Components */
+.tooltip {
+  @apply relative inline-block;
+}
+
+.tooltip-content {
+  @apply absolute z-10 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300;
+}
+
+.tooltip:hover .tooltip-content {
+  @apply opacity-100 pointer-events-auto;
+}
+
+.tooltip-top .tooltip-content {
+  @apply bottom-full left-1/2 transform -translate-x-1/2 mb-2;
+}
+
+.tooltip-bottom .tooltip-content {
+  @apply top-full left-1/2 transform -translate-x-1/2 mt-2;
+}
+
+.tooltip-left .tooltip-content {
+  @apply right-full top-1/2 transform -translate-y-1/2 mr-2;
+}
+
+.tooltip-right .tooltip-content {
+  @apply left-full top-1/2 transform -translate-y-1/2 ml-2;
+}
+
+/* Dropdown Components */
+.dropdown {
+  @apply relative inline-block;
+}
+
+.dropdown-content {
+  @apply absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none;
+}
+
+.dropdown-item {
+  @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors;
+}
+
+.dropdown-item-active {
+  @apply dropdown-item bg-blue-100 text-blue-900;
+}
+
+.dropdown-item-disabled {
+  @apply dropdown-item text-gray-400 cursor-not-allowed hover:bg-white hover:text-gray-400;
+}
+
+.dropdown-divider {
+  @apply border-t border-gray-100 my-1;
+}
+
+/* Progress Components */
+.progress {
+  @apply w-full bg-gray-200 rounded-full h-2;
+}
+
+.progress-bar {
+  @apply bg-blue-600 h-2 rounded-full transition-all duration-300;
+}
+
+.progress-bar-success {
+  @apply progress-bar bg-green-600;
+}
+
+.progress-bar-warning {
+  @apply progress-bar bg-yellow-500;
+}
+
+.progress-bar-danger {
+  @apply progress-bar bg-red-600;
+}
+
+.progress-lg {
+  @apply progress h-4;
+}
+
+.progress-lg .progress-bar {
+  @apply h-4;
+}
+
+/* Avatar Components */
+.avatar {
+  @apply inline-flex items-center justify-center rounded-full bg-gray-300 overflow-hidden;
+}
+
+.avatar-xs {
+  @apply avatar w-6 h-6 text-xs;
+}
+
+.avatar-sm {
+  @apply avatar w-8 h-8 text-sm;
+}
+
+.avatar-md {
+  @apply avatar w-12 h-12 text-base;
+}
+
+.avatar-lg {
+  @apply avatar w-16 h-16 text-lg;
+}
+
+.avatar-xl {
+  @apply avatar w-20 h-20 text-xl;
+}
+
+.avatar-img {
+  @apply w-full h-full object-cover;
+}
+
+.avatar-initials {
+  @apply font-medium text-white;
+}
+
+.avatar-status {
+  @apply absolute -bottom-0.5 -right-0.5 block h-3 w-3 rounded-full ring-2 ring-white;
+}
+
+.avatar-status-online {
+  @apply avatar-status bg-green-400;
+}
+
+.avatar-status-offline {
+  @apply avatar-status bg-gray-400;
+}
+
+.avatar-status-busy {
+  @apply avatar-status bg-red-400;
+}
+
+.avatar-status-away {
+  @apply avatar-status bg-yellow-400;
+}
+
+/* Utility Classes */
+.hover-lift {
+  @apply transition-transform duration-200 hover:-translate-y-1;
+}
+
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}
+
+.hover-glow {
+  transition: box-shadow 0.2s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.focus-ring-inset {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+}
+
+.gradient-bg {
+  @apply bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800;
+}
+
+.glass {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.glass-dark {
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+.animate-bounce-soft {
+  animation: bounceSoft 2s infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceSoft {
+  0%, 100% {
+    transform: translateY(-5%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+} 

@@ -1,0 +1,365 @@
+import express, { Request, Response } from 'express';
+import User from '../models/User';
+import { authenticate } from '../middleware/auth';
+
+const router = express.Router();
+
+/**
+ * @route GET /api/users/doctors
+ * @desc Get all verified doctors
+ * @access Public (for patients to find doctors)
+ */
+router.get('/doctors', async (req: Request, res: Response) => {
+  try {
+    const doctors = await User.find(
+      { role: 'doctor', isEmailVerified: true }, 
+      {
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        specialization: 1,
+        experience: 1,
+        consultationFee: 1,
+        bio: 1,
+        clinicAddress: 1,
+        city: 1,
+        credentials: 1,
+        languages: 1,
+        rating: 1,
+        reviewCount: 1,
+        isOnline: 1,
+        avatar: 1,
+        phone: 1,
+        licenseNumber: 1
+      }
+    ).lean();
+
+    res.json({
+      success: true,
+      message: 'Doctors retrieved successfully',
+      data: doctors
+    });
+  } catch (error) {
+    console.error('Error fetching doctors:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch doctors'
+    });
+  }
+});
+
+/**
+ * @route GET /api/users/profile
+ * @desc Get current user profile
+ * @access Private
+ */
+router.get('/profile', authenticate, async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.user!._id).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Profile retrieved successfully',
+      data: user
+    });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch profile'
+    });
+  }
+});
+
+/**
+ * @route PUT /api/users/profile
+ * @desc Update current user profile
+ * @access Private
+ */
+router.put('/profile', authenticate, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!._id;
+    const { role } = req.user!;
+    
+    // Extract allowed fields based on role
+    const allowedFields = ['firstName', 'lastName', 'phone', 'bio'];
+    
+    if (role === 'doctor') {
+      allowedFields.push(
+        'specialization', 
+        'consultationFee', 
+        'experience', 
+        'qualifications',
+        'licenseNumber',
+        'availability',
+        'location'
+      );
+    } else if (role === 'patient') {
+      allowedFields.push(
+        'dateOfBirth',
+        'gender', 
+        'bloodGroup',
+        'emergencyContact',
+        'medicalHistory',
+        'allergies'
+      );
+    }
+
+    // Filter request body to only include allowed fields
+    const updateData: any = {};
+    for (const field of allowedFields) {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    }
+
+    // Validate consultation fee for doctors
+    if (role === 'doctor' && updateData.consultationFee !== undefined) {
+      const fee = parseFloat(updateData.consultationFee);
+      if (isNaN(fee) || fee < 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Consultation fee must be a valid positive number'
+        });
+      }
+      updateData.consultationFee = fee;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: updatedUser
+    });
+
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update profile'
+    });
+  }
+});
+
+/**
+ * @route GET /api/users/admin/all
+ * @desc Get all users for admin dashboard
+ * @access Admin only
+ */
+router.get('/admin/all', authenticate, async (req: Request, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Admin access required' });
+    }
+
+    const { page = 1, limit = 50, role, search, status } = req.query;
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build query
+    const query: any = {};
+    
+    if (role && role !== 'all') {
+      query.role = role;
+    }
+    
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    if (status === 'active') {
+      query.isActive = true;
+    } else if (status === 'inactive') {
+      query.isActive = false;
+    }
+
+    const users = await User.find(query)
+      .select('firstName lastName email role isActive isEmailVerified createdAt lastLoginAt specialization experience consultationFee')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
+    const totalUsers = await User.countDocuments(query);
+
+    res.json({
+      success: true,
+      data: {
+        users,
+        pagination: {
+          currentPage: pageNum,
+          totalPages: Math.ceil(totalUsers / limitNum),
+          totalUsers,
+          hasNext: pageNum * limitNum < totalUsers,
+          hasPrev: pageNum > 1
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching users for admin:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch users' });
+  }
+});
+
+/**
+ * @route GET /api/users/admin/stats
+ * @desc Get platform statistics for admin
+ * @access Admin only
+ */
+router.get('/admin/stats', authenticate, async (req: Request, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Admin access required' });
+    }
+
+    const [
+      totalUsers,
+      totalDoctors,
+      totalPatients,
+      totalAdmins,
+      activeUsers,
+      totalAppointments,
+      pendingDoctors
+    ] = await Promise.all([
+      User.countDocuments(),
+      User.countDocuments({ role: 'doctor' }),
+      User.countDocuments({ role: 'patient' }),
+      User.countDocuments({ role: 'admin' }),
+      User.countDocuments({ isActive: true }),
+      // You'll need to import Appointment model
+      // Appointment.countDocuments(),
+      0, // Placeholder for now
+      User.countDocuments({ role: 'doctor', isEmailVerified: false })
+    ]);
+
+    // Get recent activity (last 24 hours)
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const recentSignups = await User.countDocuments({ 
+      createdAt: { $gte: yesterday } 
+    });
+
+    const stats = {
+      totalUsers,
+      totalDoctors,
+      totalPatients,
+      totalAdmins,
+      activeUsers,
+      totalAppointments,
+      pendingVerifications: pendingDoctors,
+      recentSignups,
+      systemHealth: 'healthy', // Can be enhanced with actual system checks
+      totalRevenue: 0 // Placeholder - implement with Payment model
+    };
+
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    console.error('Error fetching admin stats:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch statistics' });
+  }
+});
+
+/**
+ * @route PUT /api/users/admin/:userId/status
+ * @desc Update user status (activate/deactivate)
+ * @access Admin only
+ */
+router.put('/admin/:userId/status', authenticate, async (req: Request, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Admin access required' });
+    }
+
+    const { userId } = req.params;
+    const { isActive } = req.body;
+
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({ success: false, error: 'isActive must be a boolean' });
+    }
+
+    // Prevent admin from deactivating themselves
+    if (userId === req.user!._id.toString()) {
+      return res.status(400).json({ success: false, error: 'Cannot change your own status' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isActive },
+      { new: true, runValidators: true }
+    ).select('firstName lastName email role isActive');
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    res.json({
+      success: true,
+      data: user,
+      message: `User ${isActive ? 'activated' : 'deactivated'} successfully`
+    });
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    res.status(500).json({ success: false, error: 'Failed to update user status' });
+  }
+});
+
+/**
+ * @route PUT /api/users/admin/:userId/verify
+ * @desc Verify a doctor's account
+ * @access Admin only
+ */
+router.put('/admin/:userId/verify', authenticate, async (req: Request, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Admin access required' });
+    }
+
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ success: false, error: 'Only doctors can be verified' });
+    }
+
+    user.isEmailVerified = true;
+    user.isActive = true;
+    await user.save();
+
+    res.json({
+      success: true,
+      data: user,
+      message: 'Doctor verified successfully'
+    });
+  } catch (error) {
+    console.error('Error verifying doctor:', error);
+    res.status(500).json({ success: false, error: 'Failed to verify doctor' });
+  }
+});
+
+export default router; 

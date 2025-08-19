@@ -1,0 +1,240 @@
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { EyeIcon, EyeSlashIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { useAuthContext } from '../../components/AuthProvider';
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .email('Please enter a valid email address')
+    .required('Email is required'),
+  password: yup
+    .string()
+    .required('Password is required'),
+}).required();
+
+/**
+ * Login page component with beautiful UI
+ */
+const LoginPage: React.FC = () => {
+  const router = useRouter();
+  const { login, isAuthenticated, user, isLoading } = useAuthContext();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = router.query.redirect as string;
+      if (redirectPath) {
+        router.push(redirectPath);
+      } else {
+        switch (user.role) {
+          case 'patient':
+            router.push('/patient/dashboard');
+            break;
+          case 'doctor':
+            router.push('/doctor/dashboard');
+            break;
+          case 'admin':
+            router.push('/admin/dashboard');
+            break;
+          default:
+            router.push('/');
+        }
+      }
+    }
+  }, [isAuthenticated, user, router]);
+
+  const onSubmit = async (data: LoginFormData): Promise<void> => {
+    try {
+      setIsSubmitting(true);
+      await login(data);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div className="text-center">
+          <div className="spinner-lg text-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <>
+      <Head>
+        <title>Sign In - aiDoc</title>
+        <meta name="description" content="Sign in to your aiDoc account" />
+      </Head>
+
+      <div className="auth-container animate-fade-in">
+        <div className="auth-card hover-lift">
+          {/* Header */}
+          <div className="auth-header">
+            <div className="auth-logo">
+              <div className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">a</span>
+                </div>
+                <span className="text-2xl font-bold gradient-text">aiDoc</span>
+              </div>
+            </div>
+            <h2 className="auth-title">Welcome back</h2>
+            <p className="auth-subtitle">
+              Sign in to your account to continue
+            </p>
+          </div>
+
+          {/* Form */}
+          <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
+            <div className="auth-fields">
+              {/* Email Field */}
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
+                  Email address
+                </label>
+                <input
+                  {...register('email')}
+                  type="email"
+                  autoComplete="email"
+                  className={errors.email ? 'form-input-error' : 'form-input'}
+                  placeholder="Enter your email address"
+                />
+                {errors.email && (
+                  <div className="form-error">
+                    <ExclamationCircleIcon className="w-4 h-4 mr-1" />
+                    {errors.email.message}
+                  </div>
+                )}
+              </div>
+
+              {/* Password Field */}
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    {...register('password')}
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    className={`${errors.password ? 'form-input-error' : 'form-input'} pr-10`}
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <div className="form-error">
+                    <ExclamationCircleIcon className="w-4 h-4 mr-1" />
+                    {errors.password.message}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Forgot Password Link */}
+            <div className="flex items-center justify-end">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-primary btn-lg w-full relative"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="spinner mr-2"></div>
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">New to aiDoc?</span>
+              </div>
+            </div>
+
+            {/* Register Link */}
+            <div className="text-center">
+              <Link
+                href="/auth/register"
+                className="btn-outline btn-lg w-full"
+              >
+                Create an account
+              </Link>
+            </div>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8 text-sm text-gray-500">
+          <p>
+            By signing in, you agree to our{' '}
+            <Link href="/terms" className="text-blue-600 hover:text-blue-800">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link href="/privacy" className="text-blue-600 hover:text-blue-800">
+              Privacy Policy
+            </Link>
+          </p>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default LoginPage; 

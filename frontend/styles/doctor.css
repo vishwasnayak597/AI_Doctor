@@ -1,0 +1,429 @@
+/* ===============================================
+   DOCTOR DASHBOARD STYLES
+   =============================================== */
+
+/* Doctor Theme Colors */
+.doctor-primary {
+  @apply bg-green-600 text-white;
+}
+
+.doctor-secondary {
+  @apply bg-green-50 text-green-700 border-green-200;
+}
+
+.doctor-accent {
+  @apply bg-gradient-to-r from-green-500 to-green-600;
+}
+
+/* Doctor Dashboard Layout */
+.doctor-dashboard {
+  @apply min-h-screen bg-gray-50;
+}
+
+.doctor-header {
+  @apply bg-white shadow-sm border-b border-gray-200;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.doctor-main {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+/* Doctor Welcome Section */
+.doctor-welcome {
+  @apply text-center mb-12;
+}
+
+.doctor-welcome-icon {
+  @apply w-24 h-24 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-6;
+  animation: pulse-soft 2s infinite;
+}
+
+.doctor-welcome-title {
+  @apply text-4xl font-bold text-gray-900 mb-4;
+}
+
+.doctor-welcome-subtitle {
+  @apply text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed;
+}
+
+/* Doctor Feature Cards */
+.doctor-features {
+  @apply grid md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto;
+}
+
+.doctor-feature-card {
+  @apply bg-white rounded-xl shadow-soft border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-medium hover:-translate-y-1;
+}
+
+.doctor-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 50px -12px rgba(34, 197, 94, 0.25);
+}
+
+.doctor-feature-icon {
+  @apply w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg;
+}
+
+.doctor-feature-icon.calendar {
+  @apply bg-gradient-to-br from-blue-500 to-blue-600;
+}
+
+.doctor-feature-icon.patients {
+  @apply bg-gradient-to-br from-green-500 to-green-600;
+}
+
+.doctor-feature-icon.consultations {
+  @apply bg-gradient-to-br from-purple-500 to-purple-600;
+}
+
+.doctor-feature-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.doctor-feature-description {
+  @apply text-gray-600 text-sm leading-relaxed;
+}
+
+/* Doctor Coming Soon Section */
+.doctor-coming-soon {
+  @apply mt-12 p-6 bg-green-50 rounded-xl border border-green-200;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(21, 128, 61, 0.05) 100%);
+}
+
+.doctor-coming-soon-title {
+  @apply text-lg font-semibold text-green-900 mb-2;
+}
+
+.doctor-coming-soon-description {
+  @apply text-green-700;
+}
+
+/* Doctor Profile Info */
+.doctor-profile-info {
+  @apply mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200;
+}
+
+.doctor-profile-info p {
+  @apply text-blue-700;
+}
+
+.doctor-profile-label {
+  @apply font-medium;
+}
+
+/* Doctor Stats Cards */
+.doctor-stats {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4 mt-8;
+}
+
+.doctor-stat-card {
+  @apply bg-white p-6 rounded-xl shadow-soft border border-gray-100 text-center;
+}
+
+.doctor-stat-value {
+  @apply text-2xl font-bold text-green-600 mb-1;
+}
+
+.doctor-stat-label {
+  @apply text-sm text-gray-600;
+}
+
+/* Doctor Calendar */
+.doctor-calendar-container {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden;
+}
+
+.doctor-calendar-header {
+  @apply p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white;
+}
+
+.doctor-calendar-title {
+  @apply text-2xl font-bold mb-2;
+}
+
+.doctor-calendar-subtitle {
+  @apply text-blue-100;
+}
+
+.doctor-calendar-grid {
+  @apply p-6 grid grid-cols-7 gap-2;
+}
+
+.doctor-calendar-day {
+  @apply p-3 text-center border border-gray-200 rounded hover:bg-blue-50 cursor-pointer transition-colors;
+}
+
+.doctor-calendar-day.today {
+  @apply bg-blue-600 text-white;
+}
+
+.doctor-calendar-day.has-appointments {
+  @apply bg-green-100 text-green-800 border-green-300;
+}
+
+.doctor-calendar-day.available {
+  @apply bg-gray-50 hover:bg-green-50;
+}
+
+/* Doctor Patient Management */
+.patient-list-container {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden;
+}
+
+.patient-list-header {
+  @apply p-6 bg-gradient-to-r from-green-500 to-green-600 text-white;
+}
+
+.patient-list-title {
+  @apply text-2xl font-bold mb-2;
+}
+
+.patient-list-subtitle {
+  @apply text-green-100;
+}
+
+.patient-search-bar {
+  @apply p-4 border-b border-gray-200;
+}
+
+.patient-search-input {
+  @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500;
+}
+
+.patient-list {
+  @apply p-6 space-y-4;
+}
+
+.patient-card {
+  @apply border border-gray-200 rounded-lg p-4 hover:shadow-medium transition-all duration-200 cursor-pointer;
+}
+
+.patient-card:hover {
+  @apply border-green-300 bg-green-50;
+}
+
+.patient-avatar {
+  @apply w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold;
+}
+
+.patient-info {
+  @apply ml-4 flex-1;
+}
+
+.patient-name {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.patient-details {
+  @apply text-gray-600 text-sm;
+}
+
+.patient-last-visit {
+  @apply text-gray-500 text-xs;
+}
+
+/* Doctor Consultation */
+.consultation-container {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden;
+}
+
+.consultation-header {
+  @apply p-6 bg-gradient-to-r from-purple-500 to-purple-600 text-white;
+}
+
+.consultation-title {
+  @apply text-2xl font-bold mb-2;
+}
+
+.consultation-subtitle {
+  @apply text-purple-100;
+}
+
+.consultation-room {
+  @apply p-6 bg-gray-900 text-white;
+}
+
+.consultation-video {
+  @apply w-full bg-gray-800 rounded-lg mb-4;
+  aspect-ratio: 16 / 9;
+}
+
+.consultation-controls {
+  @apply flex justify-center space-x-4;
+}
+
+.consultation-control-btn {
+  @apply w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200;
+}
+
+.consultation-control-btn.video {
+  @apply bg-blue-600 hover:bg-blue-700;
+}
+
+.consultation-control-btn.audio {
+  @apply bg-green-600 hover:bg-green-700;
+}
+
+.consultation-control-btn.end {
+  @apply bg-red-600 hover:bg-red-700;
+}
+
+/* Doctor Prescription */
+.prescription-container {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6;
+}
+
+.prescription-header {
+  @apply text-center mb-6;
+}
+
+.prescription-title {
+  @apply text-2xl font-bold text-gray-900 mb-2;
+}
+
+.prescription-subtitle {
+  @apply text-gray-600;
+}
+
+.prescription-form {
+  @apply space-y-6;
+}
+
+.medication-item {
+  @apply border border-gray-200 rounded-lg p-4;
+}
+
+.medication-name {
+  @apply font-semibold text-gray-900;
+}
+
+.medication-dosage {
+  @apply text-gray-600 text-sm;
+}
+
+.medication-instructions {
+  @apply text-gray-500 text-sm;
+}
+
+.add-medication-btn {
+  @apply w-full border-2 border-dashed border-gray-300 rounded-lg p-4 text-gray-600 hover:border-green-400 hover:text-green-600 transition-colors cursor-pointer;
+}
+
+/* Doctor Earnings */
+.earnings-container {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6;
+}
+
+.earnings-header {
+  @apply text-center mb-6;
+}
+
+.earnings-title {
+  @apply text-2xl font-bold text-gray-900 mb-2;
+}
+
+.earnings-period {
+  @apply text-gray-600;
+}
+
+.earnings-stats {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mt-6;
+}
+
+.earnings-stat {
+  @apply text-center p-4 bg-gray-50 rounded-lg;
+}
+
+.earnings-stat-value {
+  @apply text-3xl font-bold text-green-600 mb-1;
+}
+
+.earnings-stat-label {
+  @apply text-gray-600 text-sm;
+}
+
+.earnings-chart {
+  @apply mt-6 h-64 bg-gray-50 rounded-lg flex items-center justify-center;
+}
+
+/* Doctor Responsive Design */
+@media (max-width: 768px) {
+  .doctor-features {
+    @apply grid-cols-1 gap-4;
+  }
+  
+  .doctor-welcome-title {
+    @apply text-3xl;
+  }
+  
+  .doctor-stats {
+    @apply grid-cols-2;
+  }
+  
+  .doctor-calendar-grid {
+    @apply text-sm;
+  }
+  
+  .earnings-stats {
+    @apply grid-cols-1;
+  }
+}
+
+/* Doctor Animations */
+.doctor-fade-in {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.doctor-slide-in {
+  animation: slideInRight 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Doctor Loading States */
+.doctor-loading {
+  @apply animate-pulse;
+}
+
+.doctor-skeleton {
+  @apply bg-gray-200 rounded animate-pulse;
+}
+
+/* Doctor Verification Badge */
+.doctor-verification-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.doctor-verification-badge.verified {
+  @apply bg-green-100 text-green-800;
+}
+
+.doctor-verification-badge.pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.doctor-verification-badge.rejected {
+  @apply bg-red-100 text-red-800;
+} 

@@ -1,0 +1,651 @@
+/* ===============================================
+   PATIENT DASHBOARD STYLES
+   =============================================== */
+
+/* Patient Theme Colors */
+.patient-primary {
+  @apply bg-blue-600 text-white;
+}
+
+.patient-secondary {
+  @apply bg-blue-50 text-blue-700 border-blue-200;
+}
+
+.patient-accent {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600;
+}
+
+/* Patient Dashboard Layout */
+.patient-dashboard {
+  @apply min-h-screen bg-gray-50;
+}
+
+.patient-header {
+  @apply bg-white shadow-sm border-b border-gray-200;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.patient-main {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+/* Patient Welcome Section */
+.patient-welcome {
+  @apply text-center mb-12;
+}
+
+.patient-welcome-icon {
+  @apply w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6;
+  animation: pulse-soft 2s infinite;
+}
+
+.patient-welcome-title {
+  @apply text-4xl font-bold text-gray-900 mb-4;
+}
+
+.patient-welcome-subtitle {
+  @apply text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed;
+}
+
+/* Patient Feature Cards */
+.patient-features {
+  @apply grid md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto;
+}
+
+.patient-feature-card {
+  @apply bg-white rounded-xl shadow-soft border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-medium hover:-translate-y-1;
+}
+
+.patient-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 50px -12px rgba(59, 130, 246, 0.25);
+}
+
+.patient-feature-icon {
+  @apply w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg;
+}
+
+.patient-feature-icon.symptom-checker {
+  @apply bg-gradient-to-br from-blue-500 to-blue-600;
+}
+
+.patient-feature-icon.find-doctors {
+  @apply bg-gradient-to-br from-green-500 to-green-600;
+}
+
+.patient-feature-icon.appointments {
+  @apply bg-gradient-to-br from-purple-500 to-purple-600;
+}
+
+.patient-feature-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.patient-feature-description {
+  @apply text-gray-600 text-sm leading-relaxed;
+}
+
+/* Patient Coming Soon Section */
+.patient-coming-soon {
+  @apply mt-12 p-6 bg-blue-50 rounded-xl border border-blue-200;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(79, 70, 229, 0.05) 100%);
+}
+
+.patient-coming-soon-title {
+  @apply text-lg font-semibold text-blue-900 mb-2;
+}
+
+.patient-coming-soon-description {
+  @apply text-blue-700;
+}
+
+/* Patient Quick Actions */
+.patient-quick-actions {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8;
+}
+
+.patient-quick-action {
+  @apply bg-white p-4 rounded-lg shadow-soft border border-gray-100 hover:shadow-medium transition-all duration-200 cursor-pointer;
+}
+
+.patient-quick-action:hover {
+  @apply bg-blue-50 border-blue-200;
+}
+
+.patient-quick-action-icon {
+  @apply w-8 h-8 text-blue-600 mb-2;
+}
+
+.patient-quick-action-title {
+  @apply text-sm font-medium text-gray-900;
+}
+
+/* Patient Health Stats */
+.patient-health-stats {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4 mt-8;
+}
+
+.patient-health-stat {
+  @apply bg-white p-6 rounded-xl shadow-soft border border-gray-100 text-center;
+}
+
+.patient-health-stat-value {
+  @apply text-2xl font-bold text-blue-600 mb-1;
+}
+
+.patient-health-stat-label {
+  @apply text-sm text-gray-600;
+}
+
+/* Patient Symptom Checker */
+.symptom-checker-container {
+  @apply bg-white rounded-xl shadow-lg p-6 border border-gray-100;
+}
+
+.symptom-checker-header {
+  @apply text-center mb-6;
+}
+
+.symptom-checker-title {
+  @apply text-2xl font-bold text-gray-900 mb-2;
+}
+
+.symptom-checker-subtitle {
+  @apply text-gray-600;
+}
+
+.symptom-input-area {
+  @apply mb-6;
+}
+
+.symptom-input {
+  @apply w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none;
+}
+
+.symptom-suggestions {
+  @apply mt-4 space-y-2;
+}
+
+.symptom-suggestion {
+  @apply inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm mr-2 mb-2 cursor-pointer hover:bg-blue-200 transition-colors;
+}
+
+/* Patient Doctor Search */
+.doctor-search-container {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden;
+}
+
+.doctor-search-header {
+  @apply p-6 bg-gradient-to-r from-green-500 to-green-600 text-white;
+}
+
+.doctor-search-title {
+  @apply text-2xl font-bold mb-2;
+}
+
+.doctor-search-subtitle {
+  @apply text-green-100;
+}
+
+.doctor-search-filters {
+  @apply p-6 border-b border-gray-200;
+}
+
+.doctor-search-results {
+  @apply p-6;
+}
+
+.doctor-card {
+  @apply border border-gray-200 rounded-lg p-4 hover:shadow-medium transition-all duration-200 cursor-pointer;
+}
+
+.doctor-card:hover {
+  @apply border-green-300 bg-green-50;
+}
+
+.doctor-avatar {
+  @apply w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl;
+}
+
+.doctor-info {
+  @apply ml-4 flex-1;
+}
+
+.doctor-name {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.doctor-specialization {
+  @apply text-green-600 text-sm;
+}
+
+.doctor-rating {
+  @apply flex items-center mt-1;
+}
+
+.doctor-rating-stars {
+  @apply text-yellow-400 mr-1;
+}
+
+.doctor-rating-text {
+  @apply text-gray-600 text-sm;
+}
+
+/* Patient Appointments */
+.appointment-card {
+  @apply bg-white border border-gray-200 rounded-lg p-4 hover:shadow-medium transition-all duration-200;
+}
+
+.appointment-date {
+  @apply text-lg font-semibold text-purple-600;
+}
+
+.appointment-time {
+  @apply text-gray-600;
+}
+
+.appointment-doctor {
+  @apply text-gray-900 font-medium;
+}
+
+.appointment-status {
+  @apply inline-block px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.appointment-status.confirmed {
+  @apply bg-green-100 text-green-800;
+}
+
+.appointment-status.pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.appointment-status.cancelled {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Patient Responsive Design */
+@media (max-width: 768px) {
+  .patient-features {
+    @apply grid-cols-1 gap-4;
+  }
+  
+  .patient-welcome-title {
+    @apply text-3xl;
+  }
+  
+  .patient-quick-actions {
+    @apply grid-cols-2;
+  }
+  
+  .patient-health-stats {
+    @apply grid-cols-2;
+  }
+}
+
+/* Patient Animations */
+.patient-fade-in {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.patient-slide-in {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Patient Loading States */
+.patient-loading {
+  @apply animate-pulse;
+}
+
+.patient-skeleton {
+  @apply bg-gray-200 rounded animate-pulse;
+}
+
+/* ===============================================
+   PATIENT DASHBOARD STYLES
+   =============================================== */
+
+/* Patient Theme Colors */
+.patient-primary {
+  @apply bg-blue-600 text-white;
+}
+
+.patient-secondary {
+  @apply bg-blue-50 text-blue-700 border-blue-200;
+}
+
+.patient-accent {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600;
+}
+
+/* Patient Dashboard Layout */
+.patient-dashboard {
+  @apply min-h-screen bg-gray-50;
+}
+
+.patient-header {
+  @apply bg-white shadow-sm border-b border-gray-200;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.patient-main {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+/* Patient Welcome Section */
+.patient-welcome {
+  @apply text-center mb-12;
+}
+
+.patient-welcome-icon {
+  @apply w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6;
+  animation: pulse-soft 2s infinite;
+}
+
+.patient-welcome-title {
+  @apply text-4xl font-bold text-gray-900 mb-4;
+}
+
+.patient-welcome-subtitle {
+  @apply text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed;
+}
+
+/* Patient Feature Cards */
+.patient-features {
+  @apply grid md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto;
+}
+
+.patient-feature-card {
+  @apply bg-white rounded-xl shadow-soft border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-medium hover:-translate-y-1;
+}
+
+.patient-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 50px -12px rgba(59, 130, 246, 0.25);
+}
+
+.patient-feature-icon {
+  @apply w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg;
+}
+
+.patient-feature-icon.symptom-checker {
+  @apply bg-gradient-to-br from-blue-500 to-blue-600;
+}
+
+.patient-feature-icon.find-doctors {
+  @apply bg-gradient-to-br from-green-500 to-green-600;
+}
+
+.patient-feature-icon.appointments {
+  @apply bg-gradient-to-br from-purple-500 to-purple-600;
+}
+
+.patient-feature-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.patient-feature-description {
+  @apply text-gray-600 text-sm leading-relaxed;
+}
+
+/* Patient Coming Soon Section */
+.patient-coming-soon {
+  @apply mt-12 p-6 bg-blue-50 rounded-xl border border-blue-200;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(79, 70, 229, 0.05) 100%);
+}
+
+.patient-coming-soon-title {
+  @apply text-lg font-semibold text-blue-900 mb-2;
+}
+
+.patient-coming-soon-description {
+  @apply text-blue-700;
+}
+
+/* Patient Quick Actions */
+.patient-quick-actions {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8;
+}
+
+.patient-quick-action {
+  @apply bg-white p-4 rounded-lg shadow-soft border border-gray-100 hover:shadow-medium transition-all duration-200 cursor-pointer;
+}
+
+.patient-quick-action:hover {
+  @apply bg-blue-50 border-blue-200;
+}
+
+.patient-quick-action-icon {
+  @apply w-8 h-8 text-blue-600 mb-2;
+}
+
+.patient-quick-action-title {
+  @apply text-sm font-medium text-gray-900;
+}
+
+/* Patient Health Stats */
+.patient-health-stats {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4 mt-8;
+}
+
+.patient-health-stat {
+  @apply bg-white p-6 rounded-xl shadow-soft border border-gray-100 text-center;
+}
+
+.patient-health-stat-value {
+  @apply text-2xl font-bold text-blue-600 mb-1;
+}
+
+.patient-health-stat-label {
+  @apply text-sm text-gray-600;
+}
+
+/* Patient Symptom Checker */
+.symptom-checker-container {
+  @apply bg-white rounded-xl shadow-lg p-6 border border-gray-100;
+}
+
+.symptom-checker-header {
+  @apply text-center mb-6;
+}
+
+.symptom-checker-title {
+  @apply text-2xl font-bold text-gray-900 mb-2;
+}
+
+.symptom-checker-subtitle {
+  @apply text-gray-600;
+}
+
+.symptom-input-area {
+  @apply mb-6;
+}
+
+.symptom-input {
+  @apply w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none;
+}
+
+.symptom-suggestions {
+  @apply mt-4 space-y-2;
+}
+
+.symptom-suggestion {
+  @apply inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm mr-2 mb-2 cursor-pointer hover:bg-blue-200 transition-colors;
+}
+
+/* Patient Doctor Search */
+.doctor-search-container {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden;
+}
+
+.doctor-search-header {
+  @apply p-6 bg-gradient-to-r from-green-500 to-green-600 text-white;
+}
+
+.doctor-search-title {
+  @apply text-2xl font-bold mb-2;
+}
+
+.doctor-search-subtitle {
+  @apply text-green-100;
+}
+
+.doctor-search-filters {
+  @apply p-6 border-b border-gray-200;
+}
+
+.doctor-search-results {
+  @apply p-6;
+}
+
+.doctor-card {
+  @apply border border-gray-200 rounded-lg p-4 hover:shadow-medium transition-all duration-200 cursor-pointer;
+}
+
+.doctor-card:hover {
+  @apply border-green-300 bg-green-50;
+}
+
+.doctor-avatar {
+  @apply w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl;
+}
+
+.doctor-info {
+  @apply ml-4 flex-1;
+}
+
+.doctor-name {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.doctor-specialization {
+  @apply text-green-600 text-sm;
+}
+
+.doctor-rating {
+  @apply flex items-center mt-1;
+}
+
+.doctor-rating-stars {
+  @apply text-yellow-400 mr-1;
+}
+
+.doctor-rating-text {
+  @apply text-gray-600 text-sm;
+}
+
+/* Patient Appointments */
+.appointment-card {
+  @apply bg-white border border-gray-200 rounded-lg p-4 hover:shadow-medium transition-all duration-200;
+}
+
+.appointment-date {
+  @apply text-lg font-semibold text-purple-600;
+}
+
+.appointment-time {
+  @apply text-gray-600;
+}
+
+.appointment-doctor {
+  @apply text-gray-900 font-medium;
+}
+
+.appointment-status {
+  @apply inline-block px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.appointment-status.confirmed {
+  @apply bg-green-100 text-green-800;
+}
+
+.appointment-status.pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.appointment-status.cancelled {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Patient Responsive Design */
+@media (max-width: 768px) {
+  .patient-features {
+    @apply grid-cols-1 gap-4;
+  }
+  
+  .patient-welcome-title {
+    @apply text-3xl;
+  }
+  
+  .patient-quick-actions {
+    @apply grid-cols-2;
+  }
+  
+  .patient-health-stats {
+    @apply grid-cols-2;
+  }
+}
+
+/* Patient Animations */
+.patient-fade-in {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.patient-slide-in {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Patient Loading States */
+.patient-loading {
+  @apply animate-pulse;
+}
+
+.patient-skeleton {
+  @apply bg-gray-200 rounded animate-pulse;
+} 
