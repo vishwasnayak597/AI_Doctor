@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'export',
+  trailingSlash: true,
+  distDir: 'out',
+  images: {
+    unoptimized: true
+  },
   transpilePackages: ['leaflet'],
   webpack: (config, { isServer }) => {
     if (!isServer) {

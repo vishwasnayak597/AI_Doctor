@@ -9,6 +9,7 @@ import morgan from 'morgan';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
 
 import Database from './utils/database';
 import logger, { morganStream } from './utils/logger';
@@ -122,6 +123,27 @@ async function startServer() {
     } catch (routeError) {
       console.error('❌ Error loading routes:', routeError);
       throw routeError;
+    }
+    
+    // Serve static files from frontend build (for production)
+    if (NODE_ENV === 'production') {
+      const frontendBuildPath = path.join(__dirname, '../frontend/.next');
+      const frontendStaticPath = path.join(__dirname, '../frontend/out');
+      const publicPath = path.join(__dirname, '../frontend/public');
+      
+      // Serve static files
+      app.use('/_next', express.static(path.join(frontendBuildPath)));
+      app.use('/static', express.static(path.join(frontendStaticPath, 'static')));
+      app.use('/', express.static(publicPath));
+      
+      // Handle SPA routing - serve index.html for all non-API routes
+      app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api/')) {
+          res.sendFile(path.join(frontendStaticPath, 'index.html'));
+        }
+      });
+      
+      console.log('✅ 11. Frontend static files configured for production');
     }
     
     // Error handling middleware (must be last)
