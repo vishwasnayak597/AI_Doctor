@@ -6,6 +6,11 @@ import { auth } from '../middleware/auth';
 import { Report } from '../models/Report';
 import { Appointment } from '../models/Appointment';
 
+// Extend Express Request interface to include file property from multer
+interface MulterRequest extends express.Request {
+  file?: Express.Multer.File;
+}
+
 const router = express.Router();
 
 // Ensure uploads directory exists
@@ -57,7 +62,7 @@ const upload = multer({
 // @desc    Upload a report
 // @route   POST /api/reports/upload
 // @access  Private (Patient or Doctor)
-router.post('/upload', auth, upload.single('report'), async (req, res) => {
+router.post('/upload', auth, upload.single('report'), async (req: MulterRequest, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
