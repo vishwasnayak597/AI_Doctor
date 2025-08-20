@@ -127,14 +127,29 @@ async function startServer() {
     
     // Serve static files from frontend build (for production)
     if (NODE_ENV === 'production') {
-      const frontendBuildPath = path.join(__dirname, '../frontend/.next');
-      const frontendStaticPath = path.join(__dirname, '../frontend/out');
-      const publicPath = path.join(__dirname, '../frontend/public');
+      const frontendStaticPath = path.join(__dirname, 'frontend/out');
       
-      // Serve static files
-      app.use('/_next', express.static(path.join(frontendBuildPath)));
-      app.use('/static', express.static(path.join(frontendStaticPath, 'static')));
-      app.use('/', express.static(publicPath));
+      // Serve Next.js static assets with proper MIME types
+      app.use('/_next', express.static(path.join(frontendStaticPath, '_next'), {
+        setHeaders: (res, path) => {
+          if (path.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+          } else if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+          }
+        }
+      }));
+      
+      // Serve all static files from the out directory
+      app.use('/', express.static(frontendStaticPath, {
+        setHeaders: (res, path) => {
+          if (path.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+          } else if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+          }
+        }
+      }));
       
       // Handle SPA routing - serve index.html for all non-API routes
       app.get('*', (req, res) => {
@@ -142,8 +157,6 @@ async function startServer() {
           res.sendFile(path.join(frontendStaticPath, 'index.html'));
         }
       });
-      
-      console.log('✅ 11. Frontend static files configured for production');
     }
     
     // Error handling middleware (must be last)

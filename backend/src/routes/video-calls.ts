@@ -36,6 +36,7 @@ router.post('/', [
       videoCallUrl: callData.callUrl
     });
 
+    console.log(`🎥 Doctor ${userId} started video call for appointment ${appointmentId}`);
     
     res.status(201).json({ success: true, data: callData, message: 'Video call created successfully' });
   } catch (error) {
