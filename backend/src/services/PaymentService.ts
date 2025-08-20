@@ -411,6 +411,8 @@ export class PaymentService {
     paymentDetails: Record<string, any>
   ): Promise<PaymentGatewayResponse> {
     // Mock Stripe payment processing
+    console.log(`💳 Processing Stripe payment: ${payment._id}`);
+    console.log(`Amount: ${payment.currency} ${payment.amount}`);
 
     // Simulate success/failure based on amount (for testing)
     const success = payment.amount < 10000; // Fail if amount >= 10000
@@ -442,6 +444,7 @@ export class PaymentService {
     payment: IPayment,
     paymentDetails: Record<string, any>
   ): Promise<PaymentGatewayResponse> {
+    console.log(`💳 Processing Razorpay payment: ${payment._id}`);
     
     return {
       success: true,
@@ -461,6 +464,7 @@ export class PaymentService {
     payment: IPayment,
     paymentDetails: Record<string, any>
   ): Promise<PaymentGatewayResponse> {
+    console.log(`💳 Processing PayPal payment: ${payment._id}`);
     
     return {
       success: true,
@@ -474,6 +478,7 @@ export class PaymentService {
     payment: IPayment,
     paymentDetails: Record<string, any>
   ): Promise<PaymentGatewayResponse> {
+    console.log(`💵 Processing Cash payment: ${payment._id}`);
     
     return {
       success: true,
@@ -485,6 +490,7 @@ export class PaymentService {
 
   // Refund implementations
   private static async processStripeRefund(payment: IPayment, amount: number): Promise<PaymentGatewayResponse> {
+    console.log(`🔄 Processing Stripe refund: ${payment._id}, Amount: ${amount}`);
     
     return {
       success: true,
@@ -494,6 +500,7 @@ export class PaymentService {
   }
 
   private static async processRazorpayRefund(payment: IPayment, amount: number): Promise<PaymentGatewayResponse> {
+    console.log(`🔄 Processing Razorpay refund: ${payment._id}, Amount: ${amount}`);
     
     return {
       success: true,
@@ -503,6 +510,7 @@ export class PaymentService {
   }
 
   private static async processPayPalRefund(payment: IPayment, amount: number): Promise<PaymentGatewayResponse> {
+    console.log(`🔄 Processing PayPal refund: ${payment._id}, Amount: ${amount}`);
     
     return {
       success: true,
@@ -512,6 +520,7 @@ export class PaymentService {
   }
 
   private static async processCashRefund(payment: IPayment, amount: number): Promise<PaymentGatewayResponse> {
+    console.log(`🔄 Processing Cash refund: ${payment._id}, Amount: ${amount}`);
     
     return {
       success: true,

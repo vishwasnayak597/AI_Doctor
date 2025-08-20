@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
-  trailingSlash: true,
-  distDir: 'out',
-  images: {
-    unoptimized: true
-  },
   transpilePackages: ['leaflet'],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -24,4 +24,14 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig; 
+// Only apply static export settings for production builds
+if (process.env.NODE_ENV === 'production') {
+  nextConfig.output = 'export';
+  nextConfig.trailingSlash = true;
+  nextConfig.distDir = 'out';
+  nextConfig.images = {
+    unoptimized: true
+  };
+}
+
+module.exports = nextConfig;

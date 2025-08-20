@@ -111,7 +111,7 @@ const DoctorDashboard: React.FC = () => {
     }
 
     console.log('🔍 **DOCTOR DASHBOARD DEBUG**');
-    console.log('User ID:', user._id);
+    console.log('User ID:', (user as any)?._id || (user as any)?.id);
     console.log('User Role:', user.role);
     console.log('User Email:', user.email);
 
