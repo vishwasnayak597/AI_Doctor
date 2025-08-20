@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'export',
+  trailingSlash: true,
+  distDir: 'out',
+  images: {
+    unoptimized: true
+  },
   transpilePackages: ['leaflet'],
   typescript: {
     ignoreBuildErrors: true,
@@ -24,14 +30,4 @@ const nextConfig = {
   },
 };
 
-// Only apply static export settings for production builds
-if (process.env.NODE_ENV === 'production') {
-  nextConfig.output = 'export';
-  nextConfig.trailingSlash = true;
-  nextConfig.distDir = 'out';
-  nextConfig.images = {
-    unoptimized: true
-  };
-}
-
-module.exports = nextConfig;
+module.exports = nextConfig; 
