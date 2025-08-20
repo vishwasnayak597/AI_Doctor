@@ -29,11 +29,33 @@ async function startServer() {
     
     // Setup CORS - this fixes your CORS issue!
     const corsOptions = {
-      origin: [CLIENT_URL, 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+      origin: function (origin, callback) {
+        const allowedOrigins = [
+          CLIENT_URL, 
+          'http://localhost:3000', 
+          'http://localhost:3001', 
+          'http://localhost:3002', 
+          'https://ai-doctor-qc2b.onrender.com',
+          'https://aidoc.onrender.com'
+        ].filter(Boolean); // Remove any undefined values
+        
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          console.log('🚫 CORS blocked origin:', origin);
+          console.log('🔍 Allowed origins:', allowedOrigins);
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With', 'Accept', 'sec-ch-ua-platform', 'Referer', 'User-Agent', 'sec-ch-ua', 'sec-ch-ua-mobile'],
       exposedHeaders: ['Set-Cookie'],
+      optionsSuccessStatus: 200,
+      preflightContinue: false
     };
     app.use(cors(corsOptions));
     console.log('✅ 3. CORS configured with multiple origins');
@@ -172,7 +194,7 @@ async function startServer() {
       const server = app.listen(PORT, () => {
         console.log(`✅ 13. Server running on port ${PORT} in ${NODE_ENV} mode`);
         console.log(`✅ Health check: http://localhost:${PORT}/health`);
-        console.log(`✅ CORS enabled for: ${corsOptions.origin.join(', ')}`);
+        console.log(`✅ CORS enabled for: https://ai-doctor-qc2b.onrender.com, localhost origins, and ${CLIENT_URL || 'CLIENT_URL not set'}`);
         console.log('🎉 AI Doc Backend Server is ready!');
         console.log('🔥 You can now test your curl request!');
         logger.info(`Server running on port ${PORT} in ${NODE_ENV} mode`);
