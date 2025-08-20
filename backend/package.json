@@ -2,11 +2,11 @@
   "name": "@aidoc/backend",
   "version": "1.0.0",
   "description": "Backend API server for aiDoc platform with AI, video, maps, and payment integrations",
-  "main": "dist/server.js",
+  "main": "dist/backend/src/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/backend/src/server.js",
     "lint": "eslint src/**/*.ts",
     "test": "jest",
     "test:watch": "jest --watch",
