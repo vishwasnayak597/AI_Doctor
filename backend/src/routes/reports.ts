@@ -8,7 +8,7 @@ import { Appointment } from '../models/Appointment';
 
 // Extend Express Request interface to include file property from multer
 interface MulterRequest extends express.Request {
-  file?: Express.Multer.File;
+  file?: any;
 }
 
 const router = express.Router();
