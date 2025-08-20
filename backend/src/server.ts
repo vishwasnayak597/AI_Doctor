@@ -127,7 +127,7 @@ async function startServer() {
     
     // Serve static files from frontend build (for production)
     if (NODE_ENV === 'production') {
-      const frontendStaticPath = path.join(__dirname, 'frontend/out');
+      const frontendStaticPath = path.join(__dirname, '../../../frontend/out');
       
       // Serve Next.js static assets with proper MIME types
       app.use('/_next', express.static(path.join(frontendStaticPath, '_next'), {
