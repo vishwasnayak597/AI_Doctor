@@ -60,6 +60,12 @@ async function startServer() {
     app.use(cors(corsOptions));
     console.log('✅ 3. CORS configured with multiple origins');
     
+    // Debug all requests
+    app.use((req, res, next) => {
+      console.log(`🔍 Request: ${req.method} ${req.path} from ${req.headers.origin || 'no-origin'}`);
+      next();
+    });
+    
     // Security middleware
     app.use(helmet({
       contentSecurityPolicy: false,
