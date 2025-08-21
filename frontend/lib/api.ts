@@ -1,7 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { ApiResponse } from '../../shared/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://aidoc.onrender.com/api';
+console.log('🔧 DEBUG - API_BASE_URL:', API_BASE_URL);
+console.log('🔧 DEBUG - NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
 const REQUEST_TIMEOUT = 30000;
 
 interface TokenRefreshResponse {
