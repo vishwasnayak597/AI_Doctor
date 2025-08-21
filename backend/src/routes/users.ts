@@ -12,32 +12,32 @@ const router = express.Router();
 router.get('/doctors', async (req: Request, res: Response) => {
   try {
     const doctors = await User.find(
-      { role: 'doctor', isEmailVerified: true }, 
-      {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        specialization: 1,
-        experience: 1,
-        consultationFee: 1,
-        bio: 1,
-        clinicAddress: 1,
-        city: 1,
-        credentials: 1,
-        languages: 1,
-        rating: 1,
-        reviewCount: 1,
-        isOnline: 1,
-        avatar: 1,
-        phone: 1,
-        licenseNumber: 1
-      }
+      { role: 'doctor', isEmailVerified: true, isActive: true }
     ).lean();
+
+    // Transform data to match frontend expectations
+    const transformedDoctors = doctors.map(doctor => ({
+      _id: doctor._id,
+      firstName: doctor.profile?.firstName,
+      lastName: doctor.profile?.lastName,
+      email: doctor.email,
+      phone: doctor.profile?.phone,
+      specialization: doctor.doctorProfile?.specialization,
+      experience: doctor.doctorProfile?.experience,
+      consultationFee: doctor.doctorProfile?.consultationFee,
+      rating: doctor.doctorProfile?.rating,
+      totalReviews: doctor.doctorProfile?.totalReviews,
+      education: doctor.doctorProfile?.education,
+      licenseNumber: doctor.doctorProfile?.licenseNumber,
+      availability: doctor.doctorProfile?.availability,
+      address: doctor.profile?.address,
+      isOnline: doctor.isOnline || false
+    }));
 
     res.json({
       success: true,
       message: 'Doctors retrieved successfully',
-      data: doctors
+      data: transformedDoctors
     });
   } catch (error) {
     console.error('Error fetching doctors:', error);
