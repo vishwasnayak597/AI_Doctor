@@ -3,8 +3,8 @@ import * as bcrypt from 'bcryptjs';
 import { User as IUser, Patient, Doctor, Admin } from '../../../shared/types';
 
 const SALT_ROUNDS = 12;
-const MAX_LOGIN_ATTEMPTS = 10;
-const LOCK_TIME = 2 * 60 * 60 * 1000;
+const MAX_LOGIN_ATTEMPTS = 50;
+const LOCK_TIME = 1 * 60 * 60 * 1000;
 
 export interface IUserDocument extends Document {
   email: string;
