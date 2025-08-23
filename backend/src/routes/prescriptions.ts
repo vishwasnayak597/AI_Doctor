@@ -24,6 +24,15 @@ router.post('/', auth, async (req, res) => {
       validTill
     } = req.body;
 
+    console.log('🔧 Creating prescription with data:', {
+      patient,
+      doctor: req.user!._id,
+      appointment,
+      medications: medications?.length || 0,
+      generalInstructions: generalInstructions ? 'Provided' : 'Not provided',
+      validTill
+    });
+
     const prescription = new Prescription({
       patient,
       doctor: req.user!._id,
@@ -33,7 +42,12 @@ router.post('/', auth, async (req, res) => {
       validTill
     });
 
+    console.log('🔧 Before save - prescriptionNumber:', prescription.prescriptionNumber);
+    
     await prescription.save();
+    
+    console.log('✅ Prescription saved successfully - prescriptionNumber:', prescription.prescriptionNumber);
+    
     await prescription.populate([
       { path: 'patient', select: 'firstName lastName email' },
       { path: 'doctor', select: 'firstName lastName specialization' }
@@ -45,6 +59,19 @@ router.post('/', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating prescription:', error);
+    
+    // More detailed error logging
+    if (error.name === 'ValidationError') {
+      console.error('Validation errors:', error.errors);
+      return res.status(400).json({ 
+        message: 'Validation error',
+        errors: Object.keys(error.errors).map(key => ({
+          field: key,
+          message: error.errors[key].message
+        }))
+      });
+    }
+    
     res.status(500).json({ message: 'Server error' });
   }
 });

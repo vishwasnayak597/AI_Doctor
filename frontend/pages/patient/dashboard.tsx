@@ -1059,14 +1059,14 @@ const PatientDashboard: React.FC = () => {
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-3">
                     <div className={`p-2 rounded-lg ${
-                      record.type === 'consultation' ? 'bg-blue-100 text-blue-600' :
-                      record.type === 'lab_test' ? 'bg-green-100 text-green-600' :
-                      record.type === 'prescription' ? 'bg-purple-100 text-purple-600' :
+                      (record.type || 'consultation') === 'consultation' ? 'bg-blue-100 text-blue-600' :
+                      (record.type || 'consultation') === 'lab_test' ? 'bg-green-100 text-green-600' :
+                      (record.type || 'consultation') === 'prescription' ? 'bg-purple-100 text-purple-600' :
                       'bg-orange-100 text-orange-600'
                     }`}>
-                      {record.type === 'consultation' ? <ChatBubbleLeftRightIcon className="h-5 w-5" /> :
-                       record.type === 'lab_test' ? <BeakerIcon className="h-5 w-5" /> :
-                       record.type === 'prescription' ? <DocumentTextIcon className="h-5 w-5" /> :
+                      {(record.type || 'consultation') === 'consultation' ? <ChatBubbleLeftRightIcon className="h-5 w-5" /> :
+                       (record.type || 'consultation') === 'lab_test' ? <BeakerIcon className="h-5 w-5" /> :
+                       (record.type || 'consultation') === 'prescription' ? <DocumentTextIcon className="h-5 w-5" /> :
                        <ShieldCheckIcon className="h-5 w-5" />}
                     </div>
                     <div>
@@ -1095,12 +1095,12 @@ const PatientDashboard: React.FC = () => {
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">{new Date(record.date).toLocaleDateString()}</p>
                   <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full mt-1 ${
-                    record.type === 'consultation' ? 'bg-blue-100 text-blue-800' :
-                    record.type === 'lab_test' ? 'bg-green-100 text-green-800' :
-                    record.type === 'prescription' ? 'bg-purple-100 text-purple-800' :
+                    (record.type || 'consultation') === 'consultation' ? 'bg-blue-100 text-blue-800' :
+                    (record.type || 'consultation') === 'lab_test' ? 'bg-green-100 text-green-800' :
+                    (record.type || 'consultation') === 'prescription' ? 'bg-purple-100 text-purple-800' :
                     'bg-orange-100 text-orange-800'
                   }`}>
-                    {record.type.replace('_', ' ').toUpperCase()}
+                    {(record.type || 'consultation').replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
               </div>
@@ -1445,13 +1445,13 @@ const PatientDashboard: React.FC = () => {
                   </p>
                   
                   <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full mt-2 ${
-                    report.type === 'blood_test' ? 'bg-red-100 text-red-800' :
-                    report.type === 'xray' ? 'bg-blue-100 text-blue-800' :
-                    report.type === 'mri' ? 'bg-purple-100 text-purple-800' :
-                    report.type === 'ct_scan' ? 'bg-green-100 text-green-800' :
+                    (report.type || 'general') === 'blood_test' ? 'bg-red-100 text-red-800' :
+                    (report.type || 'general') === 'xray' ? 'bg-blue-100 text-blue-800' :
+                    (report.type || 'general') === 'mri' ? 'bg-purple-100 text-purple-800' :
+                    (report.type || 'general') === 'ct_scan' ? 'bg-green-100 text-green-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
-                    {report.type.replace('_', ' ').toUpperCase()}
+                    {(report.type || 'general').replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
               ))}

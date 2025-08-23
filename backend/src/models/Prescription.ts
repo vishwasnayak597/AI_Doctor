@@ -68,7 +68,6 @@ const PrescriptionSchema = new Schema({
   },
   prescriptionNumber: {
     type: String,
-    required: true,
     unique: true,
     index: true
   },
@@ -99,8 +98,10 @@ const PrescriptionSchema = new Schema({
 // Generate prescription number
 PrescriptionSchema.pre('save', async function(next) {
   if (this.isNew && !this.prescriptionNumber) {
-    const count = await mongoose.model('Prescription').countDocuments();
-    this.prescriptionNumber = `RX${Date.now()}${String(count + 1).padStart(4, '0')}`;
+    // Generate unique prescription number using timestamp and random number
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+    this.prescriptionNumber = `RX${timestamp}${random}`;
   }
   next();
 });

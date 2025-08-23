@@ -4,6 +4,7 @@ export interface IMedicalRecord extends Document {
   patient: mongoose.Types.ObjectId;
   doctor: mongoose.Types.ObjectId;
   appointment?: mongoose.Types.ObjectId;
+  type: 'consultation' | 'lab_test' | 'prescription' | 'checkup' | 'follow_up';
   date: Date;
   diagnosis: string;
   symptoms: string[];

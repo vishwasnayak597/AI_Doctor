@@ -224,6 +224,26 @@ export class AppointmentService {
   }
 
   /**
+   * Update appointment notes
+   */
+  static async updateAppointmentNotes(appointmentId: string, notes: string, userId: string): Promise<IAppointment> {
+    const appointment = await this.getAppointmentById(appointmentId, userId);
+    if (!appointment) {
+      throw new Error('Appointment not found');
+    }
+
+    // Only doctors can update notes
+    if (appointment.doctor._id.toString() !== userId) {
+      throw new Error('Only the assigned doctor can update appointment notes');
+    }
+
+    appointment.notes = notes;
+    await appointment.save();
+
+    return appointment;
+  }
+
+  /**
    * Update appointment payment information
    */
   static async updateAppointmentPayment(

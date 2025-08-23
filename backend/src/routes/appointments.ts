@@ -127,6 +127,30 @@ router.patch('/:id/status', [
   }
 });
 
+// PATCH route to update appointment notes
+router.patch('/:id/notes', [
+  authenticate,
+  param('id').isMongoId(),
+  body('notes').optional().isString().isLength({ max: 2000 })
+], async (req: Request, res: Response) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: errors.array().map(err => err.msg).join(', ') });
+    }
+
+    if (req.user!.role !== 'doctor') {
+      return res.status(403).json({ success: false, error: 'Only doctors can update appointment notes' });
+    }
+
+    const appointment = await AppointmentService.updateAppointmentNotes(req.params.id, req.body.notes, req.user!._id.toString());
+    res.json({ success: true, data: appointment, message: 'Appointment notes updated successfully' });
+  } catch (error) {
+    console.error('Error updating appointment notes:', error);
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Failed to update appointment notes' });
+  }
+});
+
 // PUT route to update appointment payment information
 router.put('/:id', [
   authenticate,

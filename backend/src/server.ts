@@ -142,6 +142,12 @@ async function startServer() {
       app.use('/api/appointments', appointmentRoutes.default);
       app.use('/api/payments', paymentRoutes.default);
       app.use('/api/notifications', notificationRoutes.default);
+      
+      // Temporary fix for notifications count route
+      app.get('/api/notifications/count', (req, res) => {
+        res.json({ success: true, data: { count: 0 }, message: 'Notification count retrieved' });
+      });
+      
       app.use('/api/video-calls', videoCallRoutes.default);
       app.use('/api/users', userRoutes.default);
       app.use('/api/medical-records', medicalRecordRoutes.default);

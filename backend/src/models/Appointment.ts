@@ -39,6 +39,7 @@ export interface IAppointment extends Document {
     patientReview?: string;
     doctorReview?: string;
   };
+  notes?: string; // General doctor notes about the appointment
   createdAt: Date;
   updatedAt: Date;
   // Virtuals
@@ -77,7 +78,7 @@ const appointmentSchema = new Schema<IAppointment>({
     required: [true, 'Appointment date is required'],
     validate: {
       validator: function(date: Date) {
-        return date > new Date();
+        if (this.isNew) { return date > new Date(); } return true;
       },
       message: 'Appointment date must be in the future'
     }
@@ -176,7 +177,8 @@ const appointmentSchema = new Schema<IAppointment>({
     },
     patientReview: String,
     doctorReview: String
-  }
+  },
+  notes: String
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
