@@ -249,7 +249,7 @@ const VideoCallPage: React.FC = () => {
   }
 
   return (
-    <>
+    <div>
       <Head>
         <title>Video Call - aiDoc</title>
         <meta name="description" content="Video consultation with your doctor" />
