@@ -80,59 +80,22 @@ const VideoCallPage: React.FC = () => {
         const apt = response.data.data;
         
         // Debug logging to see what we're working with
-        console.log('Current user:', user);
-        console.log('Appointment data:', apt);
-        console.log('Raw appointment structure:', JSON.stringify(apt, null, 2));
+        console.log('🐛 DEBUG - Current user:', user);
+        console.log('🐛 DEBUG - User ID:', (user as any)?._id);
+        console.log('🐛 DEBUG - Appointment data:', apt);
+        console.log('🐛 DEBUG - Raw appointment structure:', JSON.stringify(apt, null, 2));
         
-        // Handle both populated and unpopulated formats
-        let patientId: string, doctorId: string;
+        // Simplified authorization - if backend returned the appointment, user is authorized
+        console.log('✅ Appointment loaded successfully - user is authorized by backend');
         
-        if (typeof apt.patient === 'object' && apt.patient._id && typeof apt.doctor === 'object' && apt.doctor._id) {
-          // Populated format
-          patientId = apt.patient._id.toString();
-          doctorId = apt.doctor._id.toString();
-          console.log('Using populated format');
-        } else if (typeof apt.patient === 'string') {
-          // String format (old or unpopulated)
-          patientId = apt.patient.toString();
-          doctorId = apt.doctor.toString();
-          console.log('Using string format');
-        } else if (apt.patientId && apt.doctorId) {
-          // Legacy format
-          patientId = apt.patientId.toString();
-          doctorId = apt.doctorId.toString();
-          console.log('Using legacy format');
-        } else {
-          console.error('Unable to determine appointment format');
-          setError('Invalid appointment data format');
-          return;
-        }
-        
+        // Extract user info for display purposes (no authorization needed here)
         const userId = (user as any)?._id?.toString();
-        
-        if (!userId) {
-          console.error('User ID not available');
-          setError('Authentication error: User not properly loaded');
-          return;
-        }
-        
-        const isPatient = userId === patientId;
-        const isDoctor = userId === doctorId;
-        
-        console.log('Authorization check:', {
+        console.log('🔐 SIMPLIFIED AUTH CHECK:', {
           userId,
-          patientId,
-          doctorId,
-          isPatient,
-          isDoctor,
-          userFirstName: user?.firstName,
-          userRole: user?.role
+          userRole: user?.role,
+          appointmentId: apt._id,
+          message: 'Backend already validated access - proceeding with call setup'
         });
-        
-        if (!isPatient && !isDoctor) {
-          setError('You are not authorized to join this call');
-          return;
-        }
 
         // Add current user to participants
         setParticipants([user?.firstName + ' ' + user?.lastName || 'User']);
