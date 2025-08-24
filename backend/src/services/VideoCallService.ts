@@ -150,15 +150,15 @@ export class VideoCallService {
       // Find appointments where:
       // 1. Patient matches
       // 2. Status is 'confirmed' (doctor started call)
-      // 3. Video call is active (within last 2 hours)
+      // 3. Video call is active (within reasonable timeframe)
       const activeAppointment = await Appointment.findOne({
         patient: patientId,
         status: 'confirmed',
         consultationType: 'video',
         videoCallId: { $exists: true },
         appointmentDate: {
-          $gte: new Date(Date.now() - 2 * 60 * 60 * 1000), // Within last 2 hours
-          $lte: new Date(Date.now() + 4 * 60 * 60 * 1000)   // Or next 4 hours
+          $gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Within last 24 hours
+          $lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)   // Or next 7 days
         }
       })
       .populate('doctor', 'firstName lastName email')
