@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useAuthContext } from '../../components/AuthProvider';
-import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { apiClient } from '../../lib/api';
 import {
   VideoCameraIcon,
@@ -250,7 +249,7 @@ const VideoCallPage: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute allowedRoles={['patient', 'doctor']}>
+    <>
       <Head>
         <title>Video Call - aiDoc</title>
         <meta name="description" content="Video consultation with your doctor" />
