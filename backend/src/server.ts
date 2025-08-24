@@ -136,6 +136,7 @@ async function startServer() {
       const medicalRecordRoutes = await import('./routes/medical-records');
       const prescriptionRoutes = await import('./routes/prescriptions');
       const reportRoutes = await import('./routes/reports');
+      const adminSpecializationRoutes = await import('./routes/admin-specializations');
       
       app.use('/api/auth', authRoutes.default);
       app.use('/api/ai', aiRoutes.default);
@@ -153,6 +154,7 @@ async function startServer() {
       app.use('/api/medical-records', medicalRecordRoutes.default);
       app.use('/api/prescriptions', prescriptionRoutes.default);
       app.use('/api/reports', reportRoutes.default);
+      app.use('/api/admin', adminSpecializationRoutes.default);
       console.log('✅ 10. API routes loaded and configured successfully');
     } catch (routeError) {
       console.error('❌ Error loading routes:', routeError);
