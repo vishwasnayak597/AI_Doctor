@@ -40,11 +40,27 @@ interface Appointment {
 const VideoCallPage: React.FC = () => {
   const router = useRouter();
   const { appointmentId } = router.query;
-  const { user } = useAuthContext();
+  const { user, isLoading, isAuthenticated } = useAuthContext();
   
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Handle authentication manually without ProtectedRoute
+  useEffect(() => {
+    console.log('🔐 Video Call Page - Auth Status:', { 
+      isLoading, 
+      isAuthenticated, 
+      user: user ? `${user.firstName} ${user.lastName}` : 'null',
+      userRole: user?.role 
+    });
+    
+    if (!isLoading && !isAuthenticated) {
+      console.log('❌ User not authenticated, redirecting to login');
+      router.push('/auth/login');
+      return;
+    }
+  }, [isLoading, isAuthenticated, user, router]);
   const [callStarted, setCallStarted] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -72,7 +88,9 @@ const VideoCallPage: React.FC = () => {
 
   const fetchAppointmentDetails = async () => {
     try {
+      console.log('🔍 Fetching appointment details for:', appointmentId);
       const response = await apiClient.get(`/appointments/${appointmentId}`);
+      
       if (response.data.success) {
         setAppointment(response.data.data);
         
@@ -83,7 +101,6 @@ const VideoCallPage: React.FC = () => {
         console.log('🐛 DEBUG - Current user:', user);
         console.log('🐛 DEBUG - User ID:', (user as any)?._id);
         console.log('🐛 DEBUG - Appointment data:', apt);
-        console.log('🐛 DEBUG - Raw appointment structure:', JSON.stringify(apt, null, 2));
         
         // Simplified authorization - if backend returned the appointment, user is authorized
         console.log('✅ Appointment loaded successfully - user is authorized by backend');
@@ -100,11 +117,18 @@ const VideoCallPage: React.FC = () => {
         // Add current user to participants
         setParticipants([user?.firstName + ' ' + user?.lastName || 'User']);
       } else {
+        console.error('❌ Appointment not found in response:', response.data);
         setError('Appointment not found');
       }
     } catch (error) {
-      console.error('Error fetching appointment:', error);
-      setError('Failed to load appointment details');
+      console.error('❌ Error fetching appointment:', error);
+      if ((error as any)?.response?.status === 401) {
+        setError('You are not authorized to view this appointment');
+      } else if ((error as any)?.response?.status === 404) {
+        setError('Appointment not found');
+      } else {
+        setError('Failed to load appointment details. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -404,7 +428,7 @@ const VideoCallPage: React.FC = () => {
           </div>
         )}
       </div>
-    </ProtectedRoute>
+    </div>
   );
 };
 
