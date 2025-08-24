@@ -129,10 +129,13 @@ const DoctorSearch: React.FC<DoctorSearchProps> = ({
           consultationFee: doc.consultationFee || 500,
           bio: doc.bio || 'Experienced medical practitioner dedicated to providing quality healthcare.',
           location: {
-            address: doc.clinicAddress || 'Medical Center',
-            city: doc.city || 'Mumbai',
-            distance: Math.random() * 10, // Random distance for now
-            coordinates: { lat: 19.0760 + Math.random() * 0.1, lng: 72.8777 + Math.random() * 0.1 }
+            address: doc.location?.address || doc.address?.street || 'Medical Center',
+            city: doc.location?.city || doc.address?.city || 'Mumbai',
+            distance: Math.random() * 10, // TODO: Calculate actual distance based on coordinates
+            coordinates: { 
+              lat: doc.location?.coordinates?.latitude || doc.address?.coordinates?.[0] || 19.0760, 
+              lng: doc.location?.coordinates?.longitude || doc.address?.coordinates?.[1] || 72.8777 
+            }
           },
           availability: {
             nextAvailable: 'Available Today',

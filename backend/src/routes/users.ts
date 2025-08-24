@@ -19,19 +19,22 @@ router.get('/doctors', async (req: Request, res: Response) => {
     // Transform data to match frontend expectations
     const transformedDoctors = doctors.map(doctor => ({
       _id: doctor._id,
-      firstName: doctor.profile?.firstName,
-      lastName: doctor.profile?.lastName,
+      firstName: doctor.firstName,
+      lastName: doctor.lastName,
       email: doctor.email,
-      phone: doctor.profile?.phone,
-      specialization: doctor.doctorProfile?.specialization,
-      experience: doctor.doctorProfile?.experience,
-      consultationFee: doctor.doctorProfile?.consultationFee,
-      rating: doctor.doctorProfile?.rating,
-      totalReviews: doctor.doctorProfile?.totalReviews,
-      education: doctor.doctorProfile?.education,
-      licenseNumber: doctor.doctorProfile?.licenseNumber,
-      availability: doctor.doctorProfile?.availability,
-      address: doctor.profile?.address,
+      phone: doctor.phone,
+      specialization: doctor.specialization,
+      experience: doctor.experience,
+      consultationFee: doctor.consultationFee,
+      rating: doctor.rating,
+      reviewCount: doctor.reviewCount || 0,
+      qualifications: doctor.qualifications,
+      licenseNumber: doctor.licenseNumber,
+      availability: doctor.availability,
+      bio: doctor.bio,
+      location: doctor.location,
+      // Also check for profile.address structure if location is not available
+      address: doctor.location || doctor.profile?.address,
       isOnline: doctor.isOnline || false
     }));
 
