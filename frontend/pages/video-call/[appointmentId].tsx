@@ -177,9 +177,14 @@ const VideoCallPage: React.FC = () => {
 
   const startCall = async () => {
     try {
+      console.log('🎬 Starting video call...');
+      console.log('👤 User role:', user?.role);
+      console.log('📋 Appointment:', appointment);
+      
       // In a real implementation, you would initialize the video call service here
       // For now, we'll simulate starting the call
       setCallStarted(true);
+      console.log('✅ Call started - showing video interface');
       
       // Simulate other participant joining after a delay
       setTimeout(() => {
@@ -202,30 +207,38 @@ const VideoCallPage: React.FC = () => {
             }
           }
           
+          console.log('👥 Adding participant:', otherParticipant);
           setParticipants(prev => [...prev, otherParticipant]);
         }
       }, 3000);
 
     } catch (error) {
-      console.error('Error starting call:', error);
+      console.error('❌ Error starting call:', error);
     }
   };
 
   const endCall = async () => {
     try {
+      console.log('🛑 Ending video call...');
+      
       // End the video call
       setCallStarted(false);
       setParticipants([]);
       
-      // In a real implementation, you would notify the backend and other participants
-      if (appointment) {
-        await apiClient.post(`/video-calls/${(appointment as any).videoCallId}/end`, {});
+      // Use the correct endpoint to end active video calls
+      if (user?.role === 'doctor') {
+        console.log('👩‍⚕️ Doctor ending call via /video-calls/end-active');
+        await apiClient.post('/video-calls/end-active');
+      } else {
+        console.log('👥 Patient leaving call');
+        // For patients, we just navigate away - doctor will end the call
       }
       
+      console.log('✅ Call ended successfully, navigating to dashboard');
       // Navigate back to dashboard
       router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
     } catch (error) {
-      console.error('Error ending call:', error);
+      console.error('❌ Error ending call:', error);
       // Still navigate back even if API call fails
       router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
     }
@@ -244,6 +257,19 @@ const VideoCallPage: React.FC = () => {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // Debug logging
+  console.log('🎥 VIDEO CALL PAGE STATE:', {
+    appointmentId,
+    user: user ? `${user.firstName} ${user.lastName} (${user.role})` : 'null',
+    isLoading,
+    isAuthenticated,
+    allowRedirect,
+    appointment: appointment ? `${appointment._id}` : 'null',
+    callStarted,
+    error,
+    loading
+  });
 
   // Don't render until user is loaded or we've waited long enough
   if (!user && (!allowRedirect || isLoading)) {
