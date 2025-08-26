@@ -1430,14 +1430,6 @@ const DoctorDashboard: React.FC = () => {
                   <XCircleIcon className="h-4 w-4" />
                   <span>End Call</span>
                 </button>
-                <button
-                  onClick={endActiveVideoCall}
-                  className="btn-danger text-sm flex items-center space-x-1"
-                  title="End any active video call"
-                >
-                  <XCircleIcon className="h-4 w-4" />
-                  <span>End Call</span>
-                </button>
                 <span className="text-gray-700">Dr. {user?.firstName} {user?.lastName}</span>
                 <button onClick={handleLogout} className="btn-secondary text-sm">
                   Logout

@@ -160,17 +160,37 @@ router.get('/active', [authenticate], async (req: Request, res: Response) => {
   }
 });
 
-// Temporary admin endpoint to clear active video calls
-router.post('/clear-active', [authenticate], async (req: Request, res: Response) => {
+// End/clear active video call - for doctors
+router.post('/end-active', [authenticate], async (req: Request, res: Response) => {
   try {
+    const userId = req.user!._id.toString();
+    const userRole = req.user!.role;
+
+    // Only doctors can end active calls
+    if (userRole !== 'doctor') {
+      return res.status(403).json({ success: false, error: 'Only doctors can end active video calls' });
+    }
+
+    // Find active video call appointments for this doctor
     const { Appointment } = await import('../models/Appointment');
-    
-    // Find and clear all active video calls
-    const result = await Appointment.updateMany(
-      { 
-        videoCallId: { $exists: true },
-        status: 'confirmed'
-      },
+    const activeCall = await Appointment.findOne({
+      doctor: userId,
+      status: 'confirmed',
+      consultationType: 'video',
+      videoCallId: { $exists: true }
+    });
+
+    if (!activeCall) {
+      return res.json({ 
+        success: true, 
+        data: null,
+        message: 'No active video calls to end' 
+      });
+    }
+
+    // End the video call by clearing the video call fields
+    await Appointment.findByIdAndUpdate(
+      activeCall._id,
       { 
         $unset: {
           videoCallId: "",
@@ -181,16 +201,16 @@ router.post('/clear-active', [authenticate], async (req: Request, res: Response)
       }
     );
 
-    console.log(`🧹 Cleared ${result.modifiedCount} active video calls`);
+    console.log(`🎥 Doctor ${userId} ended active video call for appointment ${activeCall._id}`);
     
     res.json({ 
       success: true, 
-      data: { clearedCount: result.modifiedCount },
-      message: `Cleared ${result.modifiedCount} active video calls` 
+      data: { appointmentId: activeCall._id },
+      message: 'Active video call ended successfully' 
     });
   } catch (error) {
-    console.error('Error clearing active video calls:', error);
-    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Failed to clear active video calls' });
+    console.error('Error ending active video call:', error);
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Failed to end active video call' });
   }
 });
 
