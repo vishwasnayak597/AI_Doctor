@@ -41,7 +41,7 @@ const VideoCallPage: React.FC = () => {
   const { user, isLoading, isAuthenticated } = useAuthContext();
   
   useEffect(() => {
-    alert('🚀 VIDEO CALL PAGE LOADED!');
+    console.log('🚀 VIDEO CALL PAGE LOADED!');
   }, []);
   
   console.log('🚀 VIDEO CALL PAGE COMPONENT LOADED - TIMESTAMP:', new Date().toISOString());

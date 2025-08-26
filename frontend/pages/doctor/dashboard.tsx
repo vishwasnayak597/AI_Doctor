@@ -617,30 +617,14 @@ const DoctorDashboard: React.FC = () => {
       const response = await apiClient.post('/video-calls', { appointmentId });
 
       if (response.data.success) {
-        setActiveVideoCall({
-          callId: response.data.data.callId,
-          appointmentId
-        });
+        console.log('✅ Video call started successfully');
       }
     } catch (error) {
       console.error('Error starting video call:', error);
     }
   };
 
-  const endActiveVideoCall = async () => {
-    try {
-      const response = await apiClient.post('/video-calls/end-active');
-      
-      if (response.data.success) {
-        setActiveVideoCall(null);
-        // Refresh dashboard data to update appointment status
-        fetchDashboardData();
-        console.log('✅ Active video call ended successfully');
-      }
-    } catch (error) {
-      console.error('Error ending active video call:', error);
-    }
-  };
+
 
   const updateAppointmentStatus = async (appointmentId: string, status: string) => {
     try {
@@ -920,23 +904,13 @@ const DoctorDashboard: React.FC = () => {
                             </button>
                             {appointment.consultationType === 'video' && (
                               <>
-                                {!activeVideoCall ? (
-                                  <button
-                                    onClick={() => startVideoCall(appointment._id)}
-                                    className="btn-primary text-sm flex items-center space-x-1"
-                                  >
-                                    <VideoCameraIcon className="h-4 w-4" />
-                                    <span>Start Call</span>
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={endActiveVideoCall}
-                                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
-                                  >
-                                    <XMarkIcon className="h-4 w-4" />
-                                    <span>End Call</span>
-                                  </button>
-                                )}
+                                <button
+                                  onClick={() => startVideoCall(appointment._id)}
+                                  className="btn-primary text-sm flex items-center space-x-1"
+                                >
+                                  <VideoCameraIcon className="h-4 w-4" />
+                                  <span>Start Call</span>
+                                </button>
                               </>
                             )}
                           </>

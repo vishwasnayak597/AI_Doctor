@@ -620,7 +620,7 @@ const PatientDashboard: React.FC = () => {
   };
 
   const handleJoinVideoCall = (appointment: Appointment) => {
-    alert('🚀 PATIENT JOIN CALL CLICKED!');
+    console.log('🚀 PATIENT JOIN CALL CLICKED!');
     console.log('🚀 PATIENT JOIN CALL CLICKED:', { 
       appointmentId: appointment._id,
       videoCallLink: appointment.videoCallLink,
@@ -1629,7 +1629,7 @@ const PatientDashboard: React.FC = () => {
 
   // Handle joining active video call
   const handleJoinActiveVideoCall = (callData: any) => {
-    alert('🚀 PATIENT JOIN ACTIVE CALL!');
+    console.log('🚀 PATIENT JOIN ACTIVE CALL!');
     console.log('🚀 PATIENT JOIN ACTIVE CALL:', { 
       appointmentId: callData.appointmentId,
       doctorName: callData.doctorName,
