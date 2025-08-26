@@ -65,7 +65,7 @@ const VideoCallPage: React.FC = () => {
   // Track if we should block redirects while loading
   const [allowRedirect, setAllowRedirect] = useState(false);
   
-  // Completely disable authentication redirects - just log the status
+  // Handle authentication manually without ProtectedRoute - with new tab support
   useEffect(() => {
     console.log('🔐 Video Call Page - Auth Status:', { 
       isLoading, 
@@ -74,12 +74,32 @@ const VideoCallPage: React.FC = () => {
       userRole: user?.role,
       hasToken: typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : 'server',
       appointmentId,
-      path: typeof window !== 'undefined' ? window.location.pathname : 'server'
+      allowRedirect
     });
     
-    // Don't redirect - just stay on video call page and let auth load
-    console.log('📍 Video call page loaded, no redirects allowed');
-  }, [isLoading, isAuthenticated, user, router, appointmentId]);
+    // If we have an appointmentId, we're in a valid video call context
+    // Give authentication more time to load before redirecting
+    if (appointmentId && !isLoading && !isAuthenticated) {
+      // Check if token exists in localStorage but user isn't loaded yet
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('accessToken');
+        if (token && !allowRedirect) {
+          console.log('🔄 Token exists for video call, waiting for user to load...');
+          // Give it time to load the user profile
+          setTimeout(() => {
+            setAllowRedirect(true);
+          }, 3000); // Wait 3 seconds for auth to complete
+          return;
+        }
+      }
+      
+      // Don't redirect - just stay on video call page
+      if (allowRedirect) {
+        console.log('⚠️ User not authenticated but staying on video call page');
+        return;
+      }
+    }
+  }, [isLoading, isAuthenticated, user, router, appointmentId, allowRedirect]);
   const [callStarted, setCallStarted] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -88,10 +108,10 @@ const VideoCallPage: React.FC = () => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
-    if (appointmentId) {
+    if (appointmentId && user) {
       fetchAppointmentDetails();
     }
-  }, [appointmentId]);
+  }, [appointmentId, user]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -155,14 +175,9 @@ const VideoCallPage: React.FC = () => {
 
   const startCall = async () => {
     try {
-      console.log('🎬 Starting video call...');
-      console.log('👤 User role:', user?.role);
-      console.log('📋 Appointment:', appointment);
-      
       // In a real implementation, you would initialize the video call service here
       // For now, we'll simulate starting the call
       setCallStarted(true);
-      console.log('✅ Call started - showing video interface');
       
       // Simulate other participant joining after a delay
       setTimeout(() => {
@@ -185,38 +200,32 @@ const VideoCallPage: React.FC = () => {
             }
           }
           
-          console.log('👥 Adding participant:', otherParticipant);
           setParticipants(prev => [...prev, otherParticipant]);
         }
       }, 3000);
 
     } catch (error) {
-      console.error('❌ Error starting call:', error);
+      console.error('Error starting call:', error);
     }
   };
 
   const endCall = async () => {
     try {
-      console.log('🛑 Ending video call...');
-      
       // End the video call
       setCallStarted(false);
       setParticipants([]);
       
-      // Use the correct endpoint to end active video calls
-      if (user?.role === 'doctor') {
-        console.log('👩‍⚕️ Doctor ending call via /video-calls/end-active');
-        await apiClient.post('/video-calls/end-active');
-      } else {
-        console.log('👥 Patient leaving call');
-        // For patients, we just navigate away - doctor will end the call
+      // In a real implementation, you would notify the backend and other participants
+      if (appointment) {
+        await apiClient.post(`/video-calls/${(appointment as any).videoCallId}/end`, {});
       }
       
-      console.log('✅ Call ended successfully');
-      // Don't navigate - stay on video call page
+      // Navigate back to dashboard
+      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
     } catch (error) {
-      console.error('❌ Error ending call:', error);
-      // Stay on video call page even if API call fails
+      console.error('Error ending call:', error);
+      // Still navigate back even if API call fails
+      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
     }
   };
 
@@ -234,25 +243,18 @@ const VideoCallPage: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Debug logging
-  console.log('🎥 VIDEO CALL PAGE STATE:', {
-    appointmentId,
-    user: user ? `${user.firstName} ${user.lastName} (${user.role})` : 'null',
-    isLoading,
-    isAuthenticated,
-    appointment: appointment ? `${appointment._id}` : 'null',
-    callStarted,
-    error,
-    loading
-  });
-
-  // Show loading only if we don't have appointmentId yet
-  if (!appointmentId) {
+  // Don't render until user is loaded or we've waited long enough
+  if (!user && (!allowRedirect || isLoading)) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading video call...</p>
+          <p className="mt-4 text-gray-600">
+            Loading video call for appointment {appointmentId}...
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            {isLoading ? 'Authenticating...' : 'Initializing call...'}
+          </p>
         </div>
       </div>
     );
@@ -277,10 +279,10 @@ const VideoCallPage: React.FC = () => {
           <h1 className="text-xl font-bold mb-2">Cannot Join Call</h1>
           <p className="text-gray-300 mb-4">{error}</p>
           <button
-            onClick={() => console.log('Go Back clicked - staying on page')}
+            onClick={() => router.back()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Reload Page
+            Go Back
           </button>
         </div>
       </div>
@@ -288,14 +290,7 @@ const VideoCallPage: React.FC = () => {
   }
 
   if (!appointment) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Loading video call...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -305,45 +300,7 @@ const VideoCallPage: React.FC = () => {
         <meta name="description" content="Video consultation with your doctor" />
       </Head>
 
-      <div className="min-h-screen bg-gray-900 text-white p-8">
-        <h1 className="text-3xl font-bold mb-4">🎥 Video Call Debug Page</h1>
-        
-        <div className="bg-gray-800 p-4 rounded mb-4">
-          <h2 className="text-xl mb-2">Debug Info:</h2>
-          <p>Appointment ID: {appointmentId}</p>
-          <p>User: {user ? `${user.firstName} ${user.lastName} (${user.role})` : 'Loading...'}</p>
-          <p>Loading: {loading ? 'Yes' : 'No'}</p>
-          <p>Error: {error || 'None'}</p>
-          <p>Appointment: {appointment ? 'Loaded' : 'Not loaded'}</p>
-          <p>Call Started: {callStarted ? 'Yes' : 'No'}</p>
-        </div>
-        
-        {user && appointment && (
-          <div className="bg-gray-800 p-4 rounded mb-4">
-            <h2 className="text-xl mb-2">Video Call Controls:</h2>
-            <button 
-              onClick={startCall}
-              className="bg-blue-600 text-white px-4 py-2 rounded mr-2"
-            >
-              Join Call
-            </button>
-            <button 
-              onClick={endCall}
-              className="bg-red-600 text-white px-4 py-2 rounded"
-            >
-              End Call
-            </button>
-          </div>
-        )}
-        
-        {callStarted && (
-          <div className="bg-gray-800 p-4 rounded">
-            <h2 className="text-xl mb-2">📹 Video Call Active</h2>
-            <p>Call Duration: {callDuration} seconds</p>
-            <p>Participants: {participants.join(', ')}</p>
-          </div>
-        )}
-      </div>
+      <div className="min-h-screen bg-gray-900">
         {!callStarted ? (
           // Pre-call screen
           <div className="flex items-center justify-center min-h-screen p-4">
@@ -507,18 +464,9 @@ const VideoCallPage: React.FC = () => {
                 <button
                   onClick={endCall}
                   className="p-4 rounded-full bg-red-600 hover:bg-red-500 text-white transition-colors"
-                  title="End Call"
                 >
                   <PhoneXMarkIcon className="h-6 w-6" />
                 </button>
-                
-                {/* Debug info */}
-                <div className="absolute top-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
-                  <div>User: {user?.firstName} ({user?.role})</div>
-                  <div>Call ID: {appointmentId}</div>
-                  <div>Started: {callStarted ? 'Yes' : 'No'}</div>
-                  <div>Participants: {participants.length}</div>
-                </div>
               </div>
             </div>
           </div>
