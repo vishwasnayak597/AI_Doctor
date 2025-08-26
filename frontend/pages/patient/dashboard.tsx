@@ -621,11 +621,11 @@ const PatientDashboard: React.FC = () => {
 
   const handleJoinVideoCall = (appointment: Appointment) => {
     if (appointment.videoCallLink) {
-      window.open(appointment.videoCallLink, '_blank');
+      window.location.href = appointment.videoCallLink;
     } else {
       // Generate video call link if not exists
       const callLink = `/video-call/${appointment._id}`;
-      window.open(callLink, '_blank');
+      window.location.href = callLink;
     }
   };
 

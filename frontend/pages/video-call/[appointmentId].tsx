@@ -113,6 +113,14 @@ const VideoCallPage: React.FC = () => {
     }
   }, [appointmentId, user]);
 
+  // Auto-start call for doctors when they visit the video call page
+  useEffect(() => {
+    if (user?.role === 'doctor' && appointment && !callStarted) {
+      console.log('🩺 Doctor detected - auto-starting video call interface');
+      startCall();
+    }
+  }, [user, appointment, callStarted]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (callStarted) {
