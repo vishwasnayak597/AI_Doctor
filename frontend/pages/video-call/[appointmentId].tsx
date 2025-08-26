@@ -6,14 +6,13 @@ import { apiClient } from '../../lib/api';
 import {
   VideoCameraIcon,
   MicrophoneIcon,
-  PhoneIcon,
+  PhoneXMarkIcon,
   CameraIcon,
   SpeakerWaveIcon,
   ChatBubbleLeftRightIcon,
   UserIcon,
   ClockIcon,
-  InformationCircleIcon,
-  XMarkIcon
+  InformationCircleIcon
 } from '@heroicons/react/24/outline';
 import {
   VideoCameraSlashIcon
@@ -231,33 +230,6 @@ const VideoCallPage: React.FC = () => {
     setAudioEnabled(!audioEnabled);
   };
 
-  const endCall = async () => {
-    try {
-      console.log('🛑 Ending video call...');
-      
-      // End the video call
-      setCallStarted(false);
-      setParticipants([]);
-      
-      // Use the correct endpoint to end active video calls
-      if (user?.role === 'doctor') {
-        console.log('👩‍⚕️ Doctor ending call via /video-calls/end-active');
-        await apiClient.post('/video-calls/end-active');
-      } else {
-        console.log('👥 Patient leaving call');
-        // For patients, we just navigate away - doctor will end the call
-      }
-      
-      console.log('✅ Call ended successfully, navigating to dashboard');
-      // Navigate back to dashboard
-      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
-    } catch (error) {
-      console.error('❌ Error ending call:', error);
-      // Still navigate back even if API call fails
-      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
-    }
-  };
-
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -270,7 +242,6 @@ const VideoCallPage: React.FC = () => {
     user: user ? `${user.firstName} ${user.lastName} (${user.role})` : 'null',
     isLoading,
     isAuthenticated,
-    allowRedirect,
     appointment: appointment ? `${appointment._id}` : 'null',
     callStarted,
     error,
@@ -495,7 +466,7 @@ const VideoCallPage: React.FC = () => {
                   className="p-4 rounded-full bg-red-600 hover:bg-red-500 text-white transition-colors"
                   title="End Call"
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <PhoneXMarkIcon className="h-6 w-6" />
                 </button>
                 
                 {/* Debug info */}
