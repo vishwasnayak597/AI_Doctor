@@ -91,9 +91,9 @@ const HomePage: React.FC = () => {
 
   const selectedRole = registerForm.watch('role') as 'patient' | 'doctor';
 
-  // Redirect authenticated users to their dashboard
+  // Redirect authenticated users to their dashboard (except for video calls)
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated && user && !router.asPath.includes('/video-call/')) {
       const dashboardRoutes = {
         patient: '/patient/dashboard',
         doctor: '/doctor/dashboard',
@@ -479,10 +479,10 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>aiDoc - AI-Powered Healthcare Platform</title>
+        <title>AIDOC - AI-Powered Healthcare Platform</title>
         <meta
           name="description"
-          content="Connect with doctors, get AI-powered symptom analysis, and manage your healthcare journey all in one place."
+          content="AIDOC - AI-Powered Healthcare Platform. Connect with doctors, get AI-powered symptom analysis, and manage your healthcare journey all in one place."
         />
       </Head>
 
@@ -491,11 +491,14 @@ const HomePage: React.FC = () => {
         <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">a</span>
+                  <span className="text-white font-bold text-lg">A</span>
                 </div>
-                <span className="text-xl font-bold gradient-text">aiDoc</span>
+                <div className="flex flex-col">
+                  <span className="text-xl font-bold gradient-text">AIDOC</span>
+                  <span className="text-xs text-gray-600 -mt-1">AI-Powered Healthcare</span>
+                </div>
               </div>
               <div className="flex items-center space-x-4">
                 <Link
@@ -521,9 +524,15 @@ const HomePage: React.FC = () => {
             <div className="absolute inset-0 bg-black/20"></div>
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
               <div className="text-center animate-fade-in">
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                  Your Health, <span className="text-blue-200">AI-Powered</span>
-                </h1>
+                <div className="mb-4">
+                  <div className="text-lg font-semibold text-blue-200 mb-2">Welcome to</div>
+                  <h1 className="text-4xl md:text-6xl font-bold mb-2 leading-tight">
+                    AIDOC
+                  </h1>
+                  <p className="text-xl md:text-2xl font-medium text-blue-100 mb-6">
+                    AI-Powered Healthcare Platform
+                  </p>
+                </div>
                 <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto leading-relaxed">
                   Connect with verified doctors, get instant AI symptom analysis, and manage your healthcare journey all in one intelligent platform.
                 </p>
@@ -744,7 +753,7 @@ const HomePage: React.FC = () => {
             </div>
             
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; 2024 aiDoc. All rights reserved. Made with ❤️ for better healthcare.</p>
+              <p>&copy; 2024 AIDOC. All rights reserved. Made with ❤️ for better healthcare.</p>
             </div>
           </div>
         </footer>
