@@ -336,12 +336,39 @@ const VideoCallPage: React.FC = () => {
     );
   }
 
+  // Debug logging before render
+  console.log('🎬 RENDER STATE:', {
+    appointmentId,
+    user: user ? `${user.firstName} ${user.lastName} (${user.role})` : 'null',
+    appointment: appointment ? 'loaded' : 'null',
+    callStarted,
+    isLoading,
+    loading,
+    error
+  });
+
   return (
     <div>
       <Head>
         <title>Video Call - aiDoc</title>
         <meta name="description" content="Video consultation with your doctor" />
       </Head>
+
+      {/* Debug overlay */}
+      <div style={{
+        position: 'fixed',
+        top: '10px',
+        right: '10px',
+        background: 'red',
+        color: 'white',
+        padding: '10px',
+        zIndex: 9999,
+        fontSize: '12px'
+      }}>
+        DEBUG: callStarted={callStarted ? 'true' : 'false'}, 
+        appointment={appointment ? 'yes' : 'no'},
+        user={user?.role || 'none'}
+      </div>
 
       <div className="min-h-screen bg-gray-900">
         {!callStarted ? (
