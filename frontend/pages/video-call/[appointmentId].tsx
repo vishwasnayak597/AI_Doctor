@@ -492,9 +492,18 @@ const VideoCallPage: React.FC = () => {
                 <button
                   onClick={endCall}
                   className="p-4 rounded-full bg-red-600 hover:bg-red-500 text-white transition-colors"
+                  title="End Call"
                 >
                   <PhoneXMarkIcon className="h-6 w-6" />
                 </button>
+                
+                {/* Debug info */}
+                <div className="absolute top-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
+                  <div>User: {user?.firstName} ({user?.role})</div>
+                  <div>Call ID: {appointmentId}</div>
+                  <div>Started: {callStarted ? 'Yes' : 'No'}</div>
+                  <div>Participants: {participants.length}</div>
+                </div>
               </div>
             </div>
           </div>
