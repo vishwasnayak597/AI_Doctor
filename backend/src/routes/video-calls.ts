@@ -160,4 +160,38 @@ router.get('/active', [authenticate], async (req: Request, res: Response) => {
   }
 });
 
+// Temporary admin endpoint to clear active video calls
+router.post('/clear-active', [authenticate], async (req: Request, res: Response) => {
+  try {
+    const { Appointment } = await import('../models/Appointment');
+    
+    // Find and clear all active video calls
+    const result = await Appointment.updateMany(
+      { 
+        videoCallId: { $exists: true },
+        status: 'confirmed'
+      },
+      { 
+        $unset: {
+          videoCallId: "",
+          videoCallUrl: ""
+        },
+        status: 'completed',
+        updatedAt: new Date()
+      }
+    );
+
+    console.log(`🧹 Cleared ${result.modifiedCount} active video calls`);
+    
+    res.json({ 
+      success: true, 
+      data: { clearedCount: result.modifiedCount },
+      message: `Cleared ${result.modifiedCount} active video calls` 
+    });
+  } catch (error) {
+    console.error('Error clearing active video calls:', error);
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Failed to clear active video calls' });
+  }
+});
+
 export default router; 
