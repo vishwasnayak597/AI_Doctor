@@ -627,6 +627,21 @@ const DoctorDashboard: React.FC = () => {
     }
   };
 
+  const endActiveVideoCall = async () => {
+    try {
+      const response = await apiClient.post('/video-calls/end-active');
+      
+      if (response.data.success) {
+        setActiveVideoCall(null);
+        // Refresh dashboard data to update appointment status
+        fetchDashboardData();
+        console.log('✅ Active video call ended successfully');
+      }
+    } catch (error) {
+      console.error('Error ending active video call:', error);
+    }
+  };
+
   const updateAppointmentStatus = async (appointmentId: string, status: string) => {
     try {
       const response = await apiClient.patch(`/appointments/${appointmentId}/status`, { status });
@@ -748,12 +763,23 @@ const DoctorDashboard: React.FC = () => {
                     {appointment.status}
                   </span>
                   {appointment.consultationType === 'video' && (
-                    <button
-                      onClick={() => startVideoCall(appointment._id)}
-                      className="btn-primary text-sm"
-                    >
-                      Start Call
-                    </button>
+                    <>
+                      {!activeVideoCall ? (
+                        <button
+                          onClick={() => startVideoCall(appointment._id)}
+                          className="btn-primary text-sm"
+                        >
+                          Start Call
+                        </button>
+                      ) : (
+                        <button
+                          onClick={endActiveVideoCall}
+                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          End Call
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -893,13 +919,25 @@ const DoctorDashboard: React.FC = () => {
                               <span>Complete</span>
                             </button>
                             {appointment.consultationType === 'video' && (
-                              <button
-                                onClick={() => startVideoCall(appointment._id)}
-                                className="btn-primary text-sm flex items-center space-x-1"
-                              >
-                                <VideoCameraIcon className="h-4 w-4" />
-                                <span>Start Call</span>
-                              </button>
+                              <>
+                                {!activeVideoCall ? (
+                                  <button
+                                    onClick={() => startVideoCall(appointment._id)}
+                                    className="btn-primary text-sm flex items-center space-x-1"
+                                  >
+                                    <VideoCameraIcon className="h-4 w-4" />
+                                    <span>Start Call</span>
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={endActiveVideoCall}
+                                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
+                                  >
+                                    <XMarkIcon className="h-4 w-4" />
+                                    <span>End Call</span>
+                                  </button>
+                                )}
+                              </>
                             )}
                           </>
                         )}
@@ -1383,6 +1421,22 @@ const DoctorDashboard: React.FC = () => {
                       {notificationCount}
                     </span>
                   )}
+                </button>
+                <button
+                  onClick={endActiveVideoCall}
+                  className="btn-danger text-sm flex items-center space-x-1"
+                  title="End any active video call"
+                >
+                  <XCircleIcon className="h-4 w-4" />
+                  <span>End Call</span>
+                </button>
+                <button
+                  onClick={endActiveVideoCall}
+                  className="btn-danger text-sm flex items-center space-x-1"
+                  title="End any active video call"
+                >
+                  <XCircleIcon className="h-4 w-4" />
+                  <span>End Call</span>
                 </button>
                 <span className="text-gray-700">Dr. {user?.firstName} {user?.lastName}</span>
                 <button onClick={handleLogout} className="btn-secondary text-sm">
