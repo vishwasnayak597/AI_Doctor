@@ -212,13 +212,11 @@ const VideoCallPage: React.FC = () => {
         // For patients, we just navigate away - doctor will end the call
       }
       
-      console.log('✅ Call ended successfully, navigating to dashboard');
-      // Navigate back to dashboard
-      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+      console.log('✅ Call ended successfully');
+      // Don't navigate - stay on video call page
     } catch (error) {
       console.error('❌ Error ending call:', error);
-      // Still navigate back even if API call fails
-      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+      // Stay on video call page even if API call fails
     }
   };
 
@@ -279,10 +277,10 @@ const VideoCallPage: React.FC = () => {
           <h1 className="text-xl font-bold mb-2">Cannot Join Call</h1>
           <p className="text-gray-300 mb-4">{error}</p>
           <button
-            onClick={() => router.back()}
+            onClick={() => console.log('Go Back clicked - staying on page')}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Go Back
+            Reload Page
           </button>
         </div>
       </div>
@@ -307,7 +305,45 @@ const VideoCallPage: React.FC = () => {
         <meta name="description" content="Video consultation with your doctor" />
       </Head>
 
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-gray-900 text-white p-8">
+        <h1 className="text-3xl font-bold mb-4">🎥 Video Call Debug Page</h1>
+        
+        <div className="bg-gray-800 p-4 rounded mb-4">
+          <h2 className="text-xl mb-2">Debug Info:</h2>
+          <p>Appointment ID: {appointmentId}</p>
+          <p>User: {user ? `${user.firstName} ${user.lastName} (${user.role})` : 'Loading...'}</p>
+          <p>Loading: {loading ? 'Yes' : 'No'}</p>
+          <p>Error: {error || 'None'}</p>
+          <p>Appointment: {appointment ? 'Loaded' : 'Not loaded'}</p>
+          <p>Call Started: {callStarted ? 'Yes' : 'No'}</p>
+        </div>
+        
+        {user && appointment && (
+          <div className="bg-gray-800 p-4 rounded mb-4">
+            <h2 className="text-xl mb-2">Video Call Controls:</h2>
+            <button 
+              onClick={startCall}
+              className="bg-blue-600 text-white px-4 py-2 rounded mr-2"
+            >
+              Join Call
+            </button>
+            <button 
+              onClick={endCall}
+              className="bg-red-600 text-white px-4 py-2 rounded"
+            >
+              End Call
+            </button>
+          </div>
+        )}
+        
+        {callStarted && (
+          <div className="bg-gray-800 p-4 rounded">
+            <h2 className="text-xl mb-2">📹 Video Call Active</h2>
+            <p>Call Duration: {callDuration} seconds</p>
+            <p>Participants: {participants.join(', ')}</p>
+          </div>
+        )}
+      </div>
         {!callStarted ? (
           // Pre-call screen
           <div className="flex items-center justify-center min-h-screen p-4">
