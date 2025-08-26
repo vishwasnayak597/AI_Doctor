@@ -66,7 +66,7 @@ export class VideoCallService {
         return await this.createZoomCall(callId, roomId, expiresAt);
       case 'mock':
       default:
-        return await this.createMockCall(callId, roomId, expiresAt);
+        return await this.createMockCall(callId, roomId, expiresAt, appointmentId);
     }
   }
 
@@ -188,12 +188,13 @@ export class VideoCallService {
   }
 
   // Mock implementation methods
-  private static async createMockCall(callId: string, roomId: string, expiresAt: Date): Promise<VideoCallData> {
+  private static async createMockCall(callId: string, roomId: string, expiresAt: Date, appointmentId: string): Promise<VideoCallData> {
     const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-    const callUrl = `${baseUrl}/video-call/${callId}`;
+    const callUrl = `${baseUrl}/video-call/${appointmentId}`;
 
     console.log(`🎥 Mock Video Call Created:`);
     console.log(`Call ID: ${callId}`);
+    console.log(`Appointment ID: ${appointmentId}`);
     console.log(`Room ID: ${roomId}`);
     console.log(`Call URL: ${callUrl}`);
     console.log(`Expires: ${expiresAt}`);
