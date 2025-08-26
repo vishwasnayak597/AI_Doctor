@@ -620,11 +620,19 @@ const PatientDashboard: React.FC = () => {
   };
 
   const handleJoinVideoCall = (appointment: Appointment) => {
+    console.log('🚀 PATIENT JOIN CALL CLICKED:', { 
+      appointmentId: appointment._id,
+      videoCallLink: appointment.videoCallLink,
+      timestamp: new Date().toISOString()
+    });
+    
     if (appointment.videoCallLink) {
+      console.log('📞 Using existing video call link (same tab):', appointment.videoCallLink);
       window.location.href = appointment.videoCallLink;
     } else {
       // Generate video call link if not exists
       const callLink = `/video-call/${appointment._id}`;
+      console.log('📞 Using generated video call link (same tab):', callLink);
       window.location.href = callLink;
     }
   };
@@ -1620,13 +1628,18 @@ const PatientDashboard: React.FC = () => {
 
   // Handle joining active video call
   const handleJoinActiveVideoCall = (callData: any) => {
-    const callLink = `/video-call/${callData.appointmentId}`;
-    window.open(callLink, '_blank');
+    console.log('🚀 PATIENT JOIN ACTIVE CALL:', { 
+      appointmentId: callData.appointmentId,
+      doctorName: callData.doctorName,
+      timestamp: new Date().toISOString()
+    });
     
-    // Keep the notification for a few seconds in case they need to rejoin
-    setTimeout(() => {
-      setActiveVideoCallInvitation(null);
-    }, 5000);
+    const callLink = `/video-call/${callData.appointmentId}`;
+    console.log('📞 Joining active video call (same tab):', callLink);
+    window.location.href = callLink;
+    
+    // Clear the notification immediately since we're navigating away
+    setActiveVideoCallInvitation(null);
   };
 
   return (

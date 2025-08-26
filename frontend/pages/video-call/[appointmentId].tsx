@@ -37,8 +37,18 @@ interface Appointment {
 }
 
 const VideoCallPage: React.FC = () => {
+  console.log('🚀 VIDEO CALL PAGE COMPONENT LOADED - TIMESTAMP:', new Date().toISOString());
+  
   const router = useRouter();
   const { user, isLoading, isAuthenticated } = useAuthContext();
+  
+  console.log('👤 INITIAL AUTH STATE:', { 
+    user: user ? `${user.firstName} ${user.lastName} (${user.role})` : 'null',
+    isLoading, 
+    isAuthenticated,
+    routerQuery: router.query,
+    pathname: typeof window !== 'undefined' ? window.location.pathname : 'server'
+  });
   
   // Extract appointmentId from URL - works with static exports
   const [appointmentId, setAppointmentId] = useState<string | null>(null);
