@@ -147,7 +147,15 @@ const VideoCallPage: React.FC = () => {
   }, [callStarted]);
 
   const fetchAppointmentDetails = async () => {
+    if (!appointmentId) {
+      console.log('❌ No appointmentId provided');
+      setError('No appointment ID provided');
+      setLoading(false);
+      return;
+    }
+    
     try {
+      setLoading(true);
       console.log('🔍 Fetching appointment details for:', appointmentId);
       const response = await apiClient.get(`/appointments/${appointmentId}`);
       
@@ -311,7 +319,21 @@ const VideoCallPage: React.FC = () => {
   }
 
   if (!appointment) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <h1 className="text-xl font-bold mb-2">🎥 Video Call</h1>
+          <p className="text-gray-300 mb-4">Loading appointment details...</p>
+          <p className="text-sm text-gray-400">
+            Appointment ID: {appointmentId || 'Loading...'}
+          </p>
+          <p className="text-sm text-gray-400">
+            User: {user ? `${user.firstName} ${user.lastName} (${user.role})` : 'Loading...'}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
