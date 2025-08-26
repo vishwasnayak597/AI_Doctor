@@ -62,21 +62,46 @@ const VideoCallPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Handle authentication manually without ProtectedRoute
+  // Track if we should block redirects while loading
+  const [allowRedirect, setAllowRedirect] = useState(false);
+  
+  // Handle authentication manually without ProtectedRoute - with new tab support
   useEffect(() => {
     console.log('🔐 Video Call Page - Auth Status:', { 
       isLoading, 
       isAuthenticated, 
       user: user ? `${user.firstName} ${user.lastName}` : 'null',
-      userRole: user?.role 
+      userRole: user?.role,
+      hasToken: typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : 'server',
+      appointmentId,
+      allowRedirect
     });
     
-    if (!isLoading && !isAuthenticated) {
-      console.log('❌ User not authenticated, redirecting to login');
-      router.push('/auth/login');
-      return;
+    // If we have an appointmentId, we're in a valid video call context
+    // Give authentication more time to load before redirecting
+    if (appointmentId && !isLoading && !isAuthenticated) {
+      // Check if token exists in localStorage but user isn't loaded yet
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('accessToken');
+        if (token && !allowRedirect) {
+          console.log('🔄 Token exists for video call, waiting for user to load...');
+          // Give it time to load the user profile
+          setTimeout(() => {
+            setAllowRedirect(true);
+          }, 3000); // Wait 3 seconds for auth to complete
+          return;
+        }
+      }
+      
+      // Only redirect if we've waited enough time and still no auth
+      if (allowRedirect) {
+        console.log('❌ User not authenticated after waiting, redirecting to login');
+        const currentUrl = window.location.href;
+        router.push(`/auth/login?redirect=${encodeURIComponent(currentUrl)}`);
+        return;
+      }
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isLoading, isAuthenticated, user, router, appointmentId, allowRedirect]);
   const [callStarted, setCallStarted] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -220,13 +245,18 @@ const VideoCallPage: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Don't render until user is loaded
-  if (!user) {
+  // Don't render until user is loaded or we've waited long enough
+  if (!user && (!allowRedirect || isLoading)) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading user data...</p>
+          <p className="mt-4 text-gray-600">
+            Loading video call for appointment {appointmentId}...
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            {isLoading ? 'Authenticating...' : 'Initializing call...'}
+          </p>
         </div>
       </div>
     );
