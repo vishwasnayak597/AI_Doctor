@@ -77,30 +77,8 @@ const VideoCallPage: React.FC = () => {
       allowRedirect
     });
     
-    // If we have an appointmentId, we're in a valid video call context
-    // Give authentication more time to load before redirecting
-    if (appointmentId && !isLoading && !isAuthenticated) {
-      // Check if token exists in localStorage but user isn't loaded yet
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('accessToken');
-        if (token && !allowRedirect) {
-          console.log('🔄 Token exists for video call, waiting for user to load...');
-          // Give it time to load the user profile
-          setTimeout(() => {
-            setAllowRedirect(true);
-          }, 3000); // Wait 3 seconds for auth to complete
-          return;
-        }
-      }
-      
-      // Only redirect if we've waited enough time and still no auth
-      if (allowRedirect) {
-        console.log('❌ User not authenticated after waiting, redirecting to login');
-        const currentUrl = window.location.href;
-        router.push(`/auth/login?redirect=${encodeURIComponent(currentUrl)}`);
-        return;
-      }
-    }
+    // Don't redirect - just stay on video call page and let auth load
+    console.log('📍 Staying on video call page, appointmentId:', appointmentId);
   }, [isLoading, isAuthenticated, user, router, appointmentId, allowRedirect]);
   const [callStarted, setCallStarted] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(true);
@@ -271,18 +249,13 @@ const VideoCallPage: React.FC = () => {
     loading
   });
 
-  // Don't render until user is loaded or we've waited long enough
-  if (!user && (!allowRedirect || isLoading)) {
+  // Show loading only if we don't have appointmentId yet
+  if (!appointmentId) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">
-            Loading video call for appointment {appointmentId}...
-          </p>
-          <p className="mt-2 text-sm text-gray-500">
-            {isLoading ? 'Authenticating...' : 'Initializing call...'}
-          </p>
+          <p className="mt-4 text-gray-600">Loading video call...</p>
         </div>
       </div>
     );
