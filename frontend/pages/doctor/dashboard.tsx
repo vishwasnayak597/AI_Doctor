@@ -748,21 +748,12 @@ const DoctorDashboard: React.FC = () => {
                   </span>
                   {appointment.consultationType === 'video' && (
                     <>
-                      {!activeVideoCall ? (
-                        <button
-                          onClick={() => startVideoCall(appointment._id)}
-                          className="btn-primary text-sm"
-                        >
-                          Start Call
-                        </button>
-                      ) : (
-                        <button
-                          onClick={endActiveVideoCall}
-                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                        >
-                          End Call
-                        </button>
-                      )}
+                      <button
+                        onClick={() => startVideoCall(appointment._id)}
+                        className="btn-primary text-sm"
+                      >
+                        Start Call
+                      </button>
                     </>
                   )}
                 </div>
@@ -1396,14 +1387,7 @@ const DoctorDashboard: React.FC = () => {
                     </span>
                   )}
                 </button>
-                <button
-                  onClick={endActiveVideoCall}
-                  className="btn-danger text-sm flex items-center space-x-1"
-                  title="End any active video call"
-                >
-                  <XCircleIcon className="h-4 w-4" />
-                  <span>End Call</span>
-                </button>
+
                 <span className="text-gray-700">Dr. {user?.firstName} {user?.lastName}</span>
                 <button onClick={handleLogout} className="btn-secondary text-sm">
                   Logout
