@@ -65,7 +65,7 @@ const VideoCallPage: React.FC = () => {
   // Track if we should block redirects while loading
   const [allowRedirect, setAllowRedirect] = useState(false);
   
-  // Handle authentication manually without ProtectedRoute - with new tab support
+  // Completely disable authentication redirects - just log the status
   useEffect(() => {
     console.log('🔐 Video Call Page - Auth Status:', { 
       isLoading, 
@@ -74,12 +74,12 @@ const VideoCallPage: React.FC = () => {
       userRole: user?.role,
       hasToken: typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : 'server',
       appointmentId,
-      allowRedirect
+      path: typeof window !== 'undefined' ? window.location.pathname : 'server'
     });
     
     // Don't redirect - just stay on video call page and let auth load
-    console.log('📍 Staying on video call page, appointmentId:', appointmentId);
-  }, [isLoading, isAuthenticated, user, router, appointmentId, allowRedirect]);
+    console.log('📍 Video call page loaded, no redirects allowed');
+  }, [isLoading, isAuthenticated, user, router, appointmentId]);
   const [callStarted, setCallStarted] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -88,10 +88,10 @@ const VideoCallPage: React.FC = () => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
-    if (appointmentId && user) {
+    if (appointmentId) {
       fetchAppointmentDetails();
     }
-  }, [appointmentId, user]);
+  }, [appointmentId]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -290,7 +290,14 @@ const VideoCallPage: React.FC = () => {
   }
 
   if (!appointment) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading video call...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -621,10 +621,6 @@ const DoctorDashboard: React.FC = () => {
           callId: response.data.data.callId,
           appointmentId
         });
-        
-        // Navigate doctor to video call page
-        console.log('🩺 Doctor starting call, navigating to video call page');
-        window.open(`/video-call/${appointmentId}`, '_blank');
       }
     } catch (error) {
       console.error('Error starting video call:', error);
