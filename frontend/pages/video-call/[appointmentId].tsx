@@ -78,7 +78,7 @@ const VideoCallPage: React.FC = () => {
   // Track if we should block redirects while loading
   const [allowRedirect, setAllowRedirect] = useState(false);
   
-  // Handle authentication manually without ProtectedRoute - with new tab support
+  // Authentication check - NO REDIRECTS, just logging
   useEffect(() => {
     console.log('🔐 Video Call Page - Auth Status:', { 
       isLoading, 
@@ -86,33 +86,12 @@ const VideoCallPage: React.FC = () => {
       user: user ? `${user.firstName} ${user.lastName}` : 'null',
       userRole: user?.role,
       hasToken: typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : 'server',
-      appointmentId,
-      allowRedirect
+      appointmentId
     });
     
-    // If we have an appointmentId, we're in a valid video call context
-    // Give authentication more time to load before redirecting
-    if (appointmentId && !isLoading && !isAuthenticated) {
-      // Check if token exists in localStorage but user isn't loaded yet
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('accessToken');
-        if (token && !allowRedirect) {
-          console.log('🔄 Token exists for video call, waiting for user to load...');
-          // Give it time to load the user profile
-          setTimeout(() => {
-            setAllowRedirect(true);
-          }, 3000); // Wait 3 seconds for auth to complete
-          return;
-        }
-      }
-      
-      // Don't redirect - just stay on video call page
-      if (allowRedirect) {
-        console.log('⚠️ User not authenticated but staying on video call page');
-        return;
-      }
-    }
-  }, [isLoading, isAuthenticated, user, router, appointmentId, allowRedirect]);
+    // Never redirect from video call page - just stay here
+    console.log('📍 Video call page - staying here regardless of auth status');
+  }, [isLoading, isAuthenticated, user, appointmentId]);
   const [callStarted, setCallStarted] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -308,10 +287,10 @@ const VideoCallPage: React.FC = () => {
           <h1 className="text-xl font-bold mb-2">Cannot Join Call</h1>
           <p className="text-gray-300 mb-4">{error}</p>
           <button
-            onClick={() => router.back()}
+            onClick={() => console.log('Go Back clicked - staying on page')}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Go Back
+            Reload Page
           </button>
         </div>
       </div>
