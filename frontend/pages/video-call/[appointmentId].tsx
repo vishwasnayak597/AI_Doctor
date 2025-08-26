@@ -37,11 +37,14 @@ interface Appointment {
 }
 
 const VideoCallPage: React.FC = () => {
-  console.log('🚀 VIDEO CALL PAGE COMPONENT LOADED - TIMESTAMP:', new Date().toISOString());
-  
   const router = useRouter();
   const { user, isLoading, isAuthenticated } = useAuthContext();
   
+  useEffect(() => {
+    alert('🚀 VIDEO CALL PAGE LOADED!');
+  }, []);
+  
+  console.log('🚀 VIDEO CALL PAGE COMPONENT LOADED - TIMESTAMP:', new Date().toISOString());
   console.log('👤 INITIAL AUTH STATE:', { 
     user: user ? `${user.firstName} ${user.lastName} (${user.role})` : 'null',
     isLoading, 
