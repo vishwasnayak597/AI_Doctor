@@ -220,12 +220,12 @@ const VideoCallPage: React.FC = () => {
         await apiClient.post(`/video-calls/${(appointment as any).videoCallId}/end`, {});
       }
       
-      // Navigate back to dashboard
-      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+      // Stay on video call page
+      console.log('✅ Call ended successfully');
     } catch (error) {
       console.error('Error ending call:', error);
-      // Still navigate back even if API call fails
-      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+      // Stay on video call page even if API call fails
+      console.log('❌ Call ended with error but staying on page');
     }
   };
 
