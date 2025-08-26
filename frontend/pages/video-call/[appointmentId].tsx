@@ -6,13 +6,14 @@ import { apiClient } from '../../lib/api';
 import {
   VideoCameraIcon,
   MicrophoneIcon,
-  PhoneXMarkIcon,
+  PhoneIcon,
   CameraIcon,
   SpeakerWaveIcon,
   ChatBubbleLeftRightIcon,
   UserIcon,
   ClockIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import {
   VideoCameraSlashIcon
@@ -228,6 +229,33 @@ const VideoCallPage: React.FC = () => {
 
   const toggleAudio = () => {
     setAudioEnabled(!audioEnabled);
+  };
+
+  const endCall = async () => {
+    try {
+      console.log('🛑 Ending video call...');
+      
+      // End the video call
+      setCallStarted(false);
+      setParticipants([]);
+      
+      // Use the correct endpoint to end active video calls
+      if (user?.role === 'doctor') {
+        console.log('👩‍⚕️ Doctor ending call via /video-calls/end-active');
+        await apiClient.post('/video-calls/end-active');
+      } else {
+        console.log('👥 Patient leaving call');
+        // For patients, we just navigate away - doctor will end the call
+      }
+      
+      console.log('✅ Call ended successfully, navigating to dashboard');
+      // Navigate back to dashboard
+      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+    } catch (error) {
+      console.error('❌ Error ending call:', error);
+      // Still navigate back even if API call fails
+      router.push(user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+    }
   };
 
   const formatDuration = (seconds: number) => {
@@ -467,7 +495,7 @@ const VideoCallPage: React.FC = () => {
                   className="p-4 rounded-full bg-red-600 hover:bg-red-500 text-white transition-colors"
                   title="End Call"
                 >
-                  <PhoneXMarkIcon className="h-6 w-6" />
+                  <XMarkIcon className="h-6 w-6" />
                 </button>
                 
                 {/* Debug info */}
