@@ -38,8 +38,25 @@ interface Appointment {
 
 const VideoCallPage: React.FC = () => {
   const router = useRouter();
-  const { appointmentId } = router.query;
   const { user, isLoading, isAuthenticated } = useAuthContext();
+  
+  // Extract appointmentId from URL - works with static exports
+  const [appointmentId, setAppointmentId] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // For static exports, router.query might not be immediately available
+    // Extract from window location as fallback
+    if (router.query.appointmentId) {
+      setAppointmentId(router.query.appointmentId as string);
+    } else if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      const segments = path.split('/');
+      const id = segments[segments.length - 1];
+      if (id && id !== 'video-call') {
+        setAppointmentId(id);
+      }
+    }
+  }, [router.query.appointmentId, router.isReady]);
   
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(true);
