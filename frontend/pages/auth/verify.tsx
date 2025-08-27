@@ -33,9 +33,9 @@ const VerifyPage: React.FC = () => {
         setStatus('success');
         setMessage('Your email has been verified successfully! You can now access all features.');
         
-        // Redirect to dashboard after 2 seconds
+        // Redirect to dashboard after 2 seconds (except video calls)
         setTimeout(() => {
-          if (user?.role) {
+          if (user?.role && !router.asPath.includes('/video-call/')) {
             const dashboardRoutes = {
               patient: '/patient/dashboard',
               doctor: '/doctor/dashboard',

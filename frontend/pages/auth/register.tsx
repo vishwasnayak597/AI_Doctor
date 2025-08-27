@@ -148,7 +148,7 @@ const RegisterPage: React.FC = () => {
   const selectedRole = watch('role');
 
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated && user && !router.asPath.includes('/video-call/')) {
       switch (user.role) {
         case 'patient':
           router.push('/patient/dashboard');
