@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // output: 'export', // REMOVED: Static export doesn't support dynamic routing
+  output: 'export', // RESTORED: Use static export for reliable deployment
   trailingSlash: true,
-  // distDir: 'out', // REMOVED: Not needed without static export
+  distDir: 'out', // RESTORED: Static export directory
   images: {
     unoptimized: true
   },
