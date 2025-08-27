@@ -75,9 +75,6 @@ const VideoCallPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Track if we should block redirects while loading
-  const [allowRedirect, setAllowRedirect] = useState(false);
-  
   // Authentication check - NO REDIRECTS, just logging
   useEffect(() => {
     console.log('🔐 Video Call Page - Auth Status:', { 
@@ -251,8 +248,8 @@ const VideoCallPage: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Don't render until user is loaded or we've waited long enough
-  if (!user && (!allowRedirect || isLoading)) {
+  // Only show loading if auth is still loading AND we don't have a user yet
+  if (isLoading && !user) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
@@ -261,7 +258,7 @@ const VideoCallPage: React.FC = () => {
             Loading video call for appointment {appointmentId}...
           </p>
           <p className="mt-2 text-sm text-gray-500">
-            {isLoading ? 'Authenticating...' : 'Initializing call...'}
+            Authenticating...
           </p>
         </div>
       </div>
@@ -287,7 +284,7 @@ const VideoCallPage: React.FC = () => {
           <h1 className="text-xl font-bold mb-2">Cannot Join Call</h1>
           <p className="text-gray-300 mb-4">{error}</p>
           <button
-            onClick={() => console.log('Go Back clicked - staying on page')}
+            onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Reload Page
