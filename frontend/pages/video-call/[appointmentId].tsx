@@ -251,11 +251,7 @@ const SimpleVideoCallPage: React.FC = () => {
                       : 'bg-red-600 hover:bg-red-500 text-white'
                   }`}
                 >
-                  {isAudioEnabled ? (
-                    <MicrophoneIcon className="h-6 w-6" />
-                  ) : (
-                    <MicrophoneIcon className="h-6 w-6 opacity-50" />
-                  )}
+                  <MicrophoneIcon className={`h-6 w-6 ${!isAudioEnabled ? 'opacity-50' : ''}`} />
                 </button>
 
                 <button
