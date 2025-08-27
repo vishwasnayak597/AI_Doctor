@@ -96,6 +96,27 @@ const VideoCallPage: React.FC = () => {
   const [callDuration, setCallDuration] = useState(0);
   const [participants, setParticipants] = useState<string[]>([]);
 
+  // Add fallback timeout to show interface even without appointment
+  useEffect(() => {
+    const fallbackTimer = setTimeout(() => {
+      if (!appointment && !error && !loading) {
+        console.log('⏰ FALLBACK TIMEOUT: Showing video call interface without appointment details');
+        setAppointment({
+          _id: appointmentId || 'unknown',
+          patientId: { firstName: 'Loading', lastName: 'Patient' },
+          doctorId: { firstName: 'Loading', lastName: 'Doctor', specialization: 'General' },
+          appointmentDate: new Date().toISOString(),
+          consultationType: 'video',
+          symptoms: 'Loading...',
+          status: 'confirmed',
+          fee: 0
+        } as any);
+      }
+    }, 2000); // 2 second fallback
+
+    return () => clearTimeout(fallbackTimer);
+  }, [appointment, error, loading, appointmentId]);
+
   useEffect(() => {
     console.log('🔄 Appointment loading check:', { 
       appointmentId: appointmentId || 'missing', 
@@ -310,7 +331,8 @@ const VideoCallPage: React.FC = () => {
     );
   }
 
-  if (!appointment) {
+  // Show loading only for the first few seconds
+  if (!appointment && (loading || (!user && isLoading))) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white text-center">
