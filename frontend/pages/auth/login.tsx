@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated && user && !router.asPath.includes('/video-call/')) {
       const redirectPath = router.query.redirect as string;
       if (redirectPath) {
         router.push(redirectPath);
@@ -72,26 +72,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Test user login function
-  const handleTestLogin = async (userType: 'doctor' | 'patient'): Promise<void> => {
-    const testCredentials = {
-      doctor: {
-        email: 'newtestdoctor@demo.com',
-        password: 'TestDoc123!'
-      },
-      patient: {
-        email: 'testpatient@demo.com', 
-        password: 'TestPatient123!'
-      }
-    };
 
-    try {
-      setIsSubmitting(true);
-      await login(testCredentials[userType]);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   if (isLoading) {
     return (

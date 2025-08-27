@@ -19,7 +19,7 @@ const VerifyEmailPage: React.FC = () => {
 
   useEffect(() => {
     // If user is authenticated and email is verified, redirect to dashboard
-    if (isAuthenticated && user?.isEmailVerified) {
+    if (isAuthenticated && user?.isEmailVerified && !router.asPath.includes('/video-call/')) {
       const dashboardRoutes = {
         patient: '/patient/dashboard',
         doctor: '/doctor/dashboard',
