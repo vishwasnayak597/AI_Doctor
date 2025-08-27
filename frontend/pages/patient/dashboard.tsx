@@ -304,6 +304,7 @@ const PatientDashboard: React.FC = () => {
 
   // Add state for active video call notifications
   const [activeVideoCallInvitation, setActiveVideoCallInvitation] = useState<any>(null);
+  const videoCallTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 
   // Fetch real data from APIs (wrapped in useCallback to prevent unnecessary re-renders)
@@ -485,6 +486,19 @@ const PatientDashboard: React.FC = () => {
         const activeCall = response.data.data;
         console.log('🎥 Active video call found:', activeCall);
         setActiveVideoCallInvitation(activeCall);
+        
+        // Clear any existing timeout
+        if (videoCallTimeoutRef.current) {
+          clearTimeout(videoCallTimeoutRef.current);
+        }
+        
+        // Set 5-minute timeout to auto-dismiss popup
+        videoCallTimeoutRef.current = setTimeout(() => {
+          console.log('⏰ Video call invitation timed out after 5 minutes');
+          setActiveVideoCallInvitation(null);
+          videoCallTimeoutRef.current = null;
+        }, 5 * 60 * 1000); // 5 minutes in milliseconds
+        
         pollErrorCountRef.current = 0; // Reset error count on success
       } else {
         setActiveVideoCallInvitation(null);
@@ -631,8 +645,8 @@ const PatientDashboard: React.FC = () => {
       console.log('📞 Using existing video call link (same tab):', appointment.videoCallLink);
       window.location.href = appointment.videoCallLink;
     } else {
-      // Generate video call link if not exists
-      const callLink = `/video-call/${appointment._id}`;
+      // Generate video call link if not exists (using URL parameters)
+      const callLink = `/video-call?id=${appointment._id}`;
       console.log('📞 Using generated video call link (same tab):', callLink);
       window.location.href = callLink;
     }
@@ -1615,7 +1629,14 @@ const PatientDashboard: React.FC = () => {
                 🎥 Join Call Now
               </button>
               <button
-                onClick={() => setActiveVideoCallInvitation(null)}
+                onClick={() => {
+                  // Clear timeout when manually dismissing
+                  if (videoCallTimeoutRef.current) {
+                    clearTimeout(videoCallTimeoutRef.current);
+                    videoCallTimeoutRef.current = null;
+                  }
+                  setActiveVideoCallInvitation(null);
+                }}
                 className="text-white opacity-75 hover:opacity-100 transition-opacity"
               >
                 <XMarkIcon className="h-6 w-6" />
@@ -1636,9 +1657,15 @@ const PatientDashboard: React.FC = () => {
       timestamp: new Date().toISOString()
     });
     
-    const callLink = `/video-call/${callData.appointmentId}`;
+    const callLink = `/video-call?id=${callData.appointmentId}`;
     console.log('📞 Joining active video call (same tab):', callLink);
     window.location.href = callLink;
+    
+    // Clear timeout when joining call
+    if (videoCallTimeoutRef.current) {
+      clearTimeout(videoCallTimeoutRef.current);
+      videoCallTimeoutRef.current = null;
+    }
     
     // Clear the notification immediately since we're navigating away
     setActiveVideoCallInvitation(null);
