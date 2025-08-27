@@ -73,6 +73,26 @@ const LoginPage: React.FC = () => {
   };
 
 
+  // Test user login function
+  const handleTestLogin = async (userType: 'doctor' | 'patient'): Promise<void> => {
+    const testCredentials = {
+      doctor: {
+        email: 'newtestdoctor@demo.com',
+        password: 'TestDoc123!'
+      },
+      patient: {
+        email: 'testpatient@demo.com', 
+        password: 'TestPatient123!'
+      }
+    };
+
+    try {
+      setIsSubmitting(true);
+      await login(testCredentials[userType]);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isLoading) {
     return (
