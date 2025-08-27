@@ -97,10 +97,26 @@ const VideoCallPage: React.FC = () => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
-    if (appointmentId && user) {
-      fetchAppointmentDetails();
+    console.log('🔄 Appointment loading check:', { 
+      appointmentId: appointmentId || 'missing', 
+      user: user ? `${user.firstName} ${user.lastName}` : 'missing',
+      hasToken: typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : 'server'
+    });
+    
+    if (appointmentId) {
+      if (user) {
+        console.log('✅ Both appointmentId and user available - fetching appointment');
+        fetchAppointmentDetails();
+      } else if (!isLoading) {
+        console.log('⚠️ User not available but auth not loading - fetching anyway');
+        fetchAppointmentDetails();
+      } else {
+        console.log('⏳ Waiting for user authentication...');
+      }
+    } else {
+      console.log('⏳ Waiting for appointmentId...');
     }
-  }, [appointmentId, user]);
+  }, [appointmentId, user, isLoading]);
 
   // Auto-start call for doctors when they visit the video call page
   useEffect(() => {
@@ -133,13 +149,16 @@ const VideoCallPage: React.FC = () => {
     try {
       setLoading(true);
       console.log('🔍 Fetching appointment details for:', appointmentId);
+      console.log('🔍 Current auth state:', { 
+        user: user ? `${user.firstName} ${user.lastName}` : 'null',
+        hasToken: typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : 'server'
+      });
+      
       const response = await apiClient.get(`/appointments/${appointmentId}`);
       
       if (response.data.success) {
-        setAppointment(response.data.data);
-        
-        // Check if user has permission to join this call
         const apt = response.data.data;
+        setAppointment(apt);
         
         // Debug logging to see what we're working with
         console.log('🐛 DEBUG - Current user:', user);
@@ -149,17 +168,14 @@ const VideoCallPage: React.FC = () => {
         // Simplified authorization - if backend returned the appointment, user is authorized
         console.log('✅ Appointment loaded successfully - user is authorized by backend');
         
-        // Extract user info for display purposes (no authorization needed here)
-        const userId = (user as any)?._id?.toString();
-        console.log('🔐 SIMPLIFIED AUTH CHECK:', {
-          userId,
-          userRole: user?.role,
-          appointmentId: apt._id,
-          message: 'Backend already validated access - proceeding with call setup'
-        });
-
-        // Add current user to participants
-        setParticipants([user?.firstName + ' ' + user?.lastName || 'User']);
+        // Add current user to participants (if user is available)
+        if (user) {
+          setParticipants([user.firstName + ' ' + user.lastName || 'User']);
+          console.log('👥 Added user to participants:', user.firstName + ' ' + user.lastName);
+        } else {
+          setParticipants(['Loading User...']);
+          console.log('👥 User not ready yet, adding placeholder participant');
+        }
       } else {
         console.error('❌ Appointment not found in response:', response.data);
         setError('Appointment not found');
@@ -167,7 +183,7 @@ const VideoCallPage: React.FC = () => {
     } catch (error) {
       console.error('❌ Error fetching appointment:', error);
       if ((error as any)?.response?.status === 401) {
-        setError('You are not authorized to view this appointment');
+        setError('You are not authorized to view this appointment. Please log in.');
       } else if ((error as any)?.response?.status === 404) {
         setError('Appointment not found');
       } else {
