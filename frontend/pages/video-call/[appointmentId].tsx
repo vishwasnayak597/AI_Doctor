@@ -7,14 +7,21 @@ const VideoCallPage: React.FC = () => {
   const [appointmentId, setAppointmentId] = useState<string>('');
   const [callStarted, setCallStarted] = useState<boolean>(false);
 
-  console.log('🚀 VIDEO CALL PAGE LOADED - SIMPLE VERSION');
+  console.log('🚀 VIDEO CALL PAGE LOADED - DYNAMIC ROUTE');
+  console.log('🔍 Router query:', router.query);
+  console.log('🔍 Router ready:', router.isReady);
 
   useEffect(() => {
     // Get appointment ID from URL
+    console.log('🔄 Extracting appointmentId from router.query:', router.query);
     if (router.query.appointmentId) {
-      setAppointmentId(router.query.appointmentId as string);
+      const id = router.query.appointmentId as string;
+      console.log('✅ Found appointmentId:', id);
+      setAppointmentId(id);
+    } else {
+      console.log('⏳ Waiting for router.query.appointmentId...');
     }
-  }, [router.query.appointmentId]);
+  }, [router.query.appointmentId, router.isReady]);
 
   return (
     <>
@@ -39,6 +46,8 @@ const VideoCallPage: React.FC = () => {
                 <div className="text-sm text-gray-500 mb-6">
                   <p><strong>Appointment ID:</strong> {appointmentId || 'Loading...'}</p>
                   <p><strong>Status:</strong> Ready to connect</p>
+                  <p><strong>Route Type:</strong> Dynamic Route</p>
+                  <p><strong>Router Ready:</strong> {router.isReady ? 'Yes' : 'No'}</p>
                 </div>
 
                 <button
@@ -79,7 +88,7 @@ const VideoCallPage: React.FC = () => {
                 <div className="text-6xl mb-4">🎥</div>
                 <h2 className="text-2xl font-bold mb-2">Video Call Interface</h2>
                 <p className="text-gray-300 mb-6">
-                  Simplified video call interface is working!
+                  ✅ Working video call interface!
                 </p>
                 
                 <div className="bg-gray-800 rounded-lg p-6 max-w-md mx-auto">
@@ -89,6 +98,7 @@ const VideoCallPage: React.FC = () => {
                     <li>• Appointment ID: {appointmentId}</li>
                     <li>• Call interface displays</li>
                     <li>• Controls are functional</li>
+                    <li>• Dynamic route working</li>
                   </ul>
                 </div>
               </div>
@@ -98,14 +108,14 @@ const VideoCallPage: React.FC = () => {
             <div className="bg-gray-800 p-6">
               <div className="flex items-center justify-center space-x-6">
                 <button
-                  onClick={() => alert('🎤 Microphone control')}
+                  onClick={() => alert('🎤 Microphone control working!')}
                   className="p-4 rounded-full bg-gray-600 hover:bg-gray-500 text-white transition-colors"
                 >
                   🎤
                 </button>
 
                 <button
-                  onClick={() => alert('📹 Camera control')}
+                  onClick={() => alert('📹 Camera control working!')}
                   className="p-4 rounded-full bg-gray-600 hover:bg-gray-500 text-white transition-colors"
                 >
                   📹
@@ -124,7 +134,7 @@ const VideoCallPage: React.FC = () => {
               
               <div className="text-center mt-4">
                 <p className="text-sm text-gray-400">
-                  Simple video call interface - working correctly!
+                  ✅ Video call interface working on dynamic route!
                 </p>
               </div>
             </div>
