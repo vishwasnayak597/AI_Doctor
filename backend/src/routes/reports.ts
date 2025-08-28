@@ -6,9 +6,11 @@ import { auth } from '../middleware/auth';
 import { Report } from '../models/Report';
 import { Appointment } from '../models/Appointment';
 
-// Extend Express Request interface to include file property from multer
+// Extend Express Request interface to include file property from multer and user from auth middleware
 interface MulterRequest extends express.Request {
   file?: any;
+  user?: any;
+  body: any;
 }
 
 const router = express.Router();
