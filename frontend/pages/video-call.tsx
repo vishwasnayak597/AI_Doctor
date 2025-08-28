@@ -7,13 +7,13 @@ const VideoCallPage: React.FC = () => {
   const [appointmentId, setAppointmentId] = useState<string>('');
   const [callStarted, setCallStarted] = useState<boolean>(false);
 
-  console.log('🚀 VIDEO CALL PAGE LOADED - URL PARAMS APPROACH');
+
 
   useEffect(() => {
     // Get appointment ID from URL parameters (?id=...)
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id') || router.query.id as string || '68aae708fc4d8b90de6b35f7';
-    console.log('✅ Appointment ID from URL:', id);
+
     setAppointmentId(id);
   }, [router.query]);
 
@@ -45,7 +45,7 @@ const VideoCallPage: React.FC = () => {
 
                 <button
                   onClick={() => {
-                    console.log('✅ Starting video call...');
+
                     setCallStarted(true);
                   }}
                   className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold mb-4"
@@ -116,7 +116,7 @@ const VideoCallPage: React.FC = () => {
 
                 <button
                   onClick={() => {
-                    console.log('✅ Ending call...');
+
                     setCallStarted(false);
                   }}
                   className="p-4 rounded-full bg-red-600 hover:bg-red-500 text-white transition-colors"

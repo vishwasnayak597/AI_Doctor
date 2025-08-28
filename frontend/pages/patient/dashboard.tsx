@@ -349,12 +349,7 @@ const PatientDashboard: React.FC = () => {
     try {
       setUploadingReport(true);
       
-      console.log('🔍 Starting file upload...', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
-        reportData
-      });
+
       
       const formData = new FormData();
       formData.append('report', file);
@@ -367,7 +362,7 @@ const PatientDashboard: React.FC = () => {
         formData.append('reportDate', reportData.reportDate);
       }
 
-      console.log('📤 Sending upload request to /reports/upload');
+
       
       const response = await apiClient.post('/reports/upload', formData, {
         headers: {
@@ -375,7 +370,7 @@ const PatientDashboard: React.FC = () => {
         },
       });
 
-      console.log('✅ Upload response:', response.data);
+
 
       if (response.data.success) {
         // Add the new report to the list
