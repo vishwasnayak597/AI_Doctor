@@ -14,6 +14,7 @@ import path from 'path';
 import Database from './utils/database';
 import logger, { morganStream } from './utils/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { KeepAliveService } from './services/KeepAliveService';
 
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -113,7 +114,8 @@ async function startServer() {
         message: 'AI Doc backend is running perfectly',
         environment: NODE_ENV,
         port: PORT,
-        database: 'connected'
+        database: 'connected',
+        keepAlive: KeepAliveService.getStatus()
       });
     });
     console.log('✅ 8. Health check route configured');
@@ -223,6 +225,7 @@ async function startServer() {
         const gracefulShutdown = (signal: string) => {
           console.log(`${signal} signal received: closing HTTP server`);
           clearInterval(heartbeat);
+          KeepAliveService.stop();
           server.close(() => {
             console.log('HTTP server closed');
             Database.disconnect?.();
@@ -245,6 +248,9 @@ async function startServer() {
           logger.error('Unhandled Rejection:', { reason, promise });
           gracefulShutdown('UNHANDLED_REJECTION');
         });
+        
+        // Start keep-alive service to prevent cold starts
+        KeepAliveService.start();
         
         console.log('🔥 Server startup completed successfully!');
         resolve(); // Resolve the Promise now that server is listening
