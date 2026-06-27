@@ -315,27 +315,30 @@ const DoctorDashboard: React.FC = () => {
     }
   };
 
-  // Update availability
-  const updateAvailability = async (): Promise<void> => {
+  // Save availability (called from the schedule calendar editor)
+  const saveAvailability = async (newAvailability: TimeSlot[]): Promise<void> => {
     try {
       setAvailabilityLoading(true);
       setProfileError('');
       setProfileSuccess('');
-      
-      // Filter only available days and format for backend
-      const availabilityData = availability
+
+      // Update local state immediately so the calendar reflects the change
+      setAvailability(newAvailability);
+
+      // Only persist days that are available, in the backend's format
+      const availabilityData = newAvailability
         .filter(slot => slot.isAvailable)
         .map(slot => ({
           dayOfWeek: slot.dayOfWeek,
           startTime: slot.startTime,
           endTime: slot.endTime,
-          isAvailable: slot.isAvailable
+          isAvailable: true
         }));
-      
+
       const response = await apiClient.put('/users/profile', {
         availability: availabilityData
       });
-      
+
       if (response.data.success) {
         setProfileSuccess('Availability updated successfully!');
         setTimeout(() => setProfileSuccess(''), 3000);
@@ -347,37 +350,6 @@ const DoctorDashboard: React.FC = () => {
       setAvailabilityLoading(false);
     }
   };
-
-  // Handle availability change
-  const handleAvailabilityChange = (dayIndex: number, field: keyof TimeSlot, value: string | boolean) => {
-    const updatedAvailability = [...availability];
-    updatedAvailability[dayIndex] = {
-      ...updatedAvailability[dayIndex],
-      [field]: value
-    };
-    setAvailability(updatedAvailability);
-  };
-
-  // Quick action: mark the entire week as unavailable (e.g. going on leave)
-  const markEntireWeekUnavailable = () => {
-    setAvailability(DAYS_OF_WEEK.map((_, index) => ({
-      dayOfWeek: index,
-      startTime: availability[index]?.startTime || '09:00',
-      endTime: availability[index]?.endTime || '17:00',
-      isAvailable: false
-    })));
-  };
-
-  // Quick action: mark all weekdays (Mon–Fri) available 9–5, weekend off
-  const markWeekdaysAvailable = () => {
-    setAvailability(DAYS_OF_WEEK.map((_, index) => ({
-      dayOfWeek: index,
-      startTime: availability[index]?.startTime || '09:00',
-      endTime: availability[index]?.endTime || '17:00',
-      isAvailable: index >= 1 && index <= 5
-    })));
-  };
-
 
   // Add/Update appointment notes
   const handleAddNotes = async (): Promise<void> => {
@@ -1202,11 +1174,28 @@ const DoctorDashboard: React.FC = () => {
         <div className="mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Schedule</h2>
           <p className="text-sm text-gray-600 mt-1">
-            Your availability and booked appointments. Switch between week and month, or browse other dates.
-            Edit your available hours in the Profile tab.
+            Your availability and booked appointments. Switch between week and month, browse other dates,
+            and click any day to set your available hours.
           </p>
         </div>
-        <DoctorScheduleCalendar availability={availability} appointments={appointments} />
+
+        {profileError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-sm text-red-600">{profileError}</p>
+          </div>
+        )}
+        {profileSuccess && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+            <p className="text-sm text-green-600">{profileSuccess}</p>
+          </div>
+        )}
+
+        <DoctorScheduleCalendar
+          availability={availability}
+          appointments={appointments}
+          onSave={saveAvailability}
+          saving={availabilityLoading}
+        />
       </div>
     </div>
   );
@@ -1218,11 +1207,6 @@ const DoctorDashboard: React.FC = () => {
       if (consultationFee >= 0) {
         updateConsultationFee(consultationFee);
       }
-    };
-
-    const handleAvailabilitySubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      updateAvailability();
     };
 
     return (
@@ -1282,117 +1266,23 @@ const DoctorDashboard: React.FC = () => {
             </form>
           </div>
 
-          {/* Availability Management */}
+          {/* Availability is now managed in the Schedule tab */}
           <div className="border-b border-gray-200 pb-6 mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
               <ClockIcon className="inline h-5 w-5 mr-2" />
               Availability Schedule
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Set your available hours for each day. Changes will be reflected in real-time for patients booking appointments.
+            <p className="text-sm text-gray-600">
+              Set your weekly availability in the{' '}
+              <button
+                type="button"
+                onClick={() => setActiveTab('schedule')}
+                className="text-blue-600 hover:text-blue-700 font-medium underline"
+              >
+                Schedule tab
+              </button>{' '}
+              — click any day to choose your hours or mark yourself unavailable.
             </p>
-
-            {/* Quick actions */}
-            <div className="flex flex-wrap gap-3 mb-4">
-              <button
-                type="button"
-                onClick={markWeekdaysAvailable}
-                className="flex items-center space-x-2 px-3 py-2 text-sm bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors"
-              >
-                <CheckCircleIcon className="h-4 w-4" />
-                <span>Available Mon–Fri (9–5)</span>
-              </button>
-              <button
-                type="button"
-                onClick={markEntireWeekUnavailable}
-                className="flex items-center space-x-2 px-3 py-2 text-sm bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors"
-              >
-                <XCircleIcon className="h-4 w-4" />
-                <span>Mark entire week unavailable</span>
-              </button>
-            </div>
-
-            {availabilityLoading && (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                <p className="text-gray-600">Updating availability...</p>
-              </div>
-            )}
-
-            {!availabilityLoading && (
-              <form onSubmit={handleAvailabilitySubmit} className="space-y-4">
-                <div className="grid gap-3">
-                  {DAYS_OF_WEEK.map((day, index) => {
-                    const dayAvailability = availability[index] || {
-                      dayOfWeek: index,
-                      startTime: '09:00',
-                      endTime: '17:00',
-                      isAvailable: false
-                    };
-
-                    return (
-                      <div key={day} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
-                        <div className="flex items-center space-x-4 flex-1">
-                          <div className="w-20">
-                            <span className="text-sm font-medium text-gray-700">{day}</span>
-                          </div>
-                          
-                          {dayAvailability.isAvailable ? (
-                            <div className="flex items-center space-x-3 flex-1">
-                              <div className="flex items-center space-x-2">
-                                <label className="text-xs text-gray-600">From:</label>
-                                <input
-                                  type="time"
-                                  value={dayAvailability.startTime}
-                                  onChange={(e) => handleAvailabilityChange(index, 'startTime', e.target.value)}
-                                  className="block border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
-                                />
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <label className="text-xs text-gray-600">To:</label>
-                                <input
-                                  type="time"
-                                  value={dayAvailability.endTime}
-                                  onChange={(e) => handleAvailabilityChange(index, 'endTime', e.target.value)}
-                                  className="block border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
-                                />
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex-1">
-                              <span className="text-sm text-gray-500 italic">Not available</span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="ml-4">
-                          <label className="flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={dayAvailability.isAvailable}
-                              onChange={(e) => handleAvailabilityChange(index, 'isAvailable', e.target.checked)}
-                              className="form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                            />
-                            <span className="ml-2 text-sm text-gray-700">Available</span>
-                          </label>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                <div className="flex justify-end pt-4">
-                  <button
-                    type="submit"
-                    disabled={availabilityLoading}
-                    className="flex items-center space-x-2 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
-                  >
-                    <CheckIcon className="h-4 w-4" />
-                    <span>{availabilityLoading ? 'Saving...' : 'Save Availability'}</span>
-                  </button>
-                </div>
-              </form>
-            )}
           </div>
 
           {/* Basic Profile Information */}
