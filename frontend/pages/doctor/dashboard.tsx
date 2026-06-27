@@ -357,6 +357,55 @@ const DoctorDashboard: React.FC = () => {
     setAvailability(updatedAvailability);
   };
 
+  // Quick action: mark the entire week as unavailable (e.g. going on leave)
+  const markEntireWeekUnavailable = () => {
+    setAvailability(DAYS_OF_WEEK.map((_, index) => ({
+      dayOfWeek: index,
+      startTime: availability[index]?.startTime || '09:00',
+      endTime: availability[index]?.endTime || '17:00',
+      isAvailable: false
+    })));
+  };
+
+  // Quick action: mark all weekdays (Mon–Fri) available 9–5, weekend off
+  const markWeekdaysAvailable = () => {
+    setAvailability(DAYS_OF_WEEK.map((_, index) => ({
+      dayOfWeek: index,
+      startTime: availability[index]?.startTime || '09:00',
+      endTime: availability[index]?.endTime || '17:00',
+      isAvailable: index >= 1 && index <= 5
+    })));
+  };
+
+  // Group this week's appointments by weekday (0=Sun..6=Sat) for the calendar view
+  const getCurrentWeekDays = () => {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay()); // back to Sunday
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    return DAYS_OF_WEEK.map((dayName, index) => {
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + index);
+
+      const dayAppointments = (Array.isArray(appointments) ? appointments : [])
+        .filter((apt: any) => {
+          const apptDate = new Date(apt.appointmentDate);
+          return apptDate.toDateString() === date.toDateString();
+        })
+        .sort((a: any, b: any) =>
+          new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime());
+
+      return {
+        dayName,
+        date,
+        isToday: date.toDateString() === today.toDateString(),
+        availability: availability[index],
+        appointments: dayAppointments
+      };
+    });
+  };
+
   // Add/Update appointment notes
   const handleAddNotes = async (): Promise<void> => {
     if (!selectedAppointment || !appointmentNotes.trim()) return;
@@ -560,6 +609,57 @@ const DoctorDashboard: React.FC = () => {
     }
   }, [selectedPatient, fetchPatientMedicalData]);
 
+  // Derive dashboard stats from the loaded appointments (real numbers, not mocks)
+  useEffect(() => {
+    if (!Array.isArray(appointments)) return;
+
+    const now = new Date();
+    const isSameDay = (d: Date) =>
+      d.getFullYear() === now.getFullYear() &&
+      d.getMonth() === now.getMonth() &&
+      d.getDate() === now.getDate();
+    const isSameMonth = (d: Date) =>
+      d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+
+    const uniquePatients = new Set<string>();
+    let todayAppointments = 0;
+    let monthlyRevenue = 0;
+    let completedAppointments = 0;
+    let pendingAppointments = 0;
+    let ratingSum = 0;
+    let ratingCount = 0;
+
+    appointments.forEach((apt: any) => {
+      const date = new Date(apt.appointmentDate);
+      const patientId = apt.patient?._id || apt.patient;
+      if (patientId) uniquePatients.add(String(patientId));
+
+      if (isSameDay(date)) todayAppointments += 1;
+      if (apt.status === 'completed') completedAppointments += 1;
+      if (apt.status === 'scheduled' || apt.status === 'confirmed') pendingAppointments += 1;
+
+      // Revenue: paid appointments in the current month
+      if (apt.paymentStatus === 'paid' && isSameMonth(date)) {
+        monthlyRevenue += Number(apt.fee) || 0;
+      }
+
+      const patientRating = apt.rating?.patientRating;
+      if (typeof patientRating === 'number') {
+        ratingSum += patientRating;
+        ratingCount += 1;
+      }
+    });
+
+    setStats({
+      totalPatients: uniquePatients.size,
+      todayAppointments,
+      monthlyRevenue,
+      averageRating: ratingCount > 0 ? Math.round((ratingSum / ratingCount) * 10) / 10 : 0,
+      completedAppointments,
+      pendingAppointments
+    });
+  }, [appointments]);
+
   // Fetch dashboard data
   const fetchDashboardData = async (): Promise<void> => {
     try {      
@@ -572,33 +672,8 @@ const DoctorDashboard: React.FC = () => {
       // Fetch patients
       await fetchPatients();
 
-      // Fetch stats
-      try {
-        const statsResponse = await apiClient.get('/appointments/stats');
-        
-        if (statsResponse.data.success) {
-          const statsData = statsResponse.data;
-          setStats({
-            totalPatients: statsData.data.total || 0,
-            todayAppointments: statsData.data.upcoming || 0,
-            monthlyRevenue: 25000, // Mock data
-            averageRating: 4.8, // Mock data
-            completedAppointments: statsData.data.completed || 0,
-            pendingAppointments: statsData.data.upcoming || 0
-          });
-        }
-      } catch (statsError) {
-        console.warn('⚠️ Error fetching stats, using defaults:', statsError);
-        // Use default stats if stats endpoint fails
-        setStats({
-          totalPatients: 0,
-          todayAppointments: 0,
-          monthlyRevenue: 0,
-          averageRating: 0,
-          completedAppointments: 0,
-          pendingAppointments: 0
-        });
-      }
+      // Stats are derived from the loaded appointments (see useEffect below),
+      // so no separate stats fetch is needed here.
 
     } catch (error) {
       console.error('❌ Error fetching dashboard data:', error);
@@ -1227,7 +1302,27 @@ const DoctorDashboard: React.FC = () => {
             <p className="text-sm text-gray-600 mb-4">
               Set your available hours for each day. Changes will be reflected in real-time for patients booking appointments.
             </p>
-            
+
+            {/* Quick actions */}
+            <div className="flex flex-wrap gap-3 mb-4">
+              <button
+                type="button"
+                onClick={markWeekdaysAvailable}
+                className="flex items-center space-x-2 px-3 py-2 text-sm bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors"
+              >
+                <CheckCircleIcon className="h-4 w-4" />
+                <span>Available Mon–Fri (9–5)</span>
+              </button>
+              <button
+                type="button"
+                onClick={markEntireWeekUnavailable}
+                className="flex items-center space-x-2 px-3 py-2 text-sm bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors"
+              >
+                <XCircleIcon className="h-4 w-4" />
+                <span>Mark entire week unavailable</span>
+              </button>
+            </div>
+
             {availabilityLoading && (
               <div className="text-center py-4">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
@@ -1310,7 +1405,66 @@ const DoctorDashboard: React.FC = () => {
               </form>
             )}
           </div>
-          
+
+          {/* This Week's Schedule — availability + appointments at a glance */}
+          <div className="border-b border-gray-200 pb-6 mb-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <CalendarDaysIcon className="inline h-5 w-5 mr-2" />
+              This Week&apos;s Schedule
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Your availability and booked appointments for the current week.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+              {getCurrentWeekDays().map((day) => {
+                const isAvailable = day.availability?.isAvailable;
+                return (
+                  <div
+                    key={day.dayName}
+                    className={`rounded-lg border p-3 min-h-[120px] flex flex-col ${
+                      day.isToday ? 'border-blue-500 ring-1 ring-blue-200 bg-blue-50' : 'border-gray-200 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-gray-700">
+                        {day.dayName.slice(0, 3)}
+                      </span>
+                      <span className={`text-xs ${day.isToday ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
+                        {day.date.getDate()}
+                      </span>
+                    </div>
+
+                    {isAvailable ? (
+                      <span className="text-[11px] text-green-600 mb-2">
+                        {day.availability?.startTime}–{day.availability?.endTime}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-gray-400 italic mb-2">Unavailable</span>
+                    )}
+
+                    <div className="flex-1 space-y-1">
+                      {day.appointments.length === 0 ? (
+                        <span className="text-[11px] text-gray-300">No appointments</span>
+                      ) : (
+                        day.appointments.map((apt: any) => (
+                          <div
+                            key={apt._id}
+                            className="text-[11px] px-1.5 py-1 rounded bg-blue-100 text-blue-800 truncate"
+                            title={`${apt.patient?.firstName || ''} ${apt.patient?.lastName || ''} — ${apt.status}`}
+                          >
+                            {new Date(apt.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}{' '}
+                            {apt.patient?.firstName || 'Patient'}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Basic Profile Information */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Information</h3>
