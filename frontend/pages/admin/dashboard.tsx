@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useAuthContext } from '../../components/AuthProvider';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 import NotificationPanel from '../../components/NotificationPanel';
+import { apiClient } from '../../lib/api';
 import {
   UsersIcon,
   ChartBarIcon,
@@ -97,29 +98,19 @@ const AdminDashboard: React.FC = () => {
       setLoading(true);
       
       // Fetch real statistics from API
-      const statsResponse = await fetch('/api/users/admin/stats', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setStats(statsData.data);
+      const statsResponse = await apiClient.get('/users/admin/stats');
+      if (statsResponse.data.success && statsResponse.data.data) {
+        setStats(statsResponse.data.data);
       }
 
       // Fetch real users data
-      const usersResponse = await fetch(`/api/users/admin/all?page=1&limit=50&role=${userFilter}&search=${searchTerm}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (usersResponse.ok) {
-        const usersData = await usersResponse.json();
-        setUsers(usersData.data.users);
+      const usersResponse = await apiClient.get(
+        `/users/admin/all?page=1&limit=50&role=${userFilter}&search=${searchTerm}`
+      );
+      if (usersResponse.data.success) {
+        setUsers(usersResponse.data.data?.users || []);
       }
-      
+
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       // Fallback to mock data
@@ -141,14 +132,9 @@ const AdminDashboard: React.FC = () => {
 
   const fetchNotificationCount = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/notifications/unread-count', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setNotificationCount(data.data.count);
+      const response = await apiClient.get('/notifications/unread-count');
+      if (response.data.success) {
+        setNotificationCount(response.data.data?.count || 0);
       }
     } catch (error) {
       console.error('Error fetching notification count:', error);
@@ -191,69 +177,52 @@ const AdminDashboard: React.FC = () => {
 
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`/api/users/admin/${userId}/status`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          isActive: !currentStatus
-        })
+      const response = await apiClient.put(`/users/admin/${userId}/status`, {
+        isActive: !currentStatus
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setUsers(prev => prev.map(user => 
-          user._id === userId 
+      if (response.data.success) {
+        setUsers(prev => prev.map(user =>
+          user._id === userId
             ? { ...user, isActive: !currentStatus }
             : user
         ));
-        
+
         // Show success message
-        alert(result.message);
+        alert(response.data.message);
       } else {
-        const error = await response.json();
-        alert(`Error: ${error.error}`);
+        alert(`Error: ${response.data.error}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating user status:', error);
-      alert('Failed to update user status');
+      alert(error.response?.data?.error || 'Failed to update user status');
     }
   };
 
   const verifyDoctor = async (userId: string) => {
     try {
-      const response = await fetch(`/api/users/admin/${userId}/verify`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const response = await apiClient.put(`/users/admin/${userId}/verify`, {});
 
-      if (response.ok) {
-        const result = await response.json();
-        setUsers(prev => prev.map(user => 
-          user._id === userId 
+      if (response.data.success) {
+        setUsers(prev => prev.map(user =>
+          user._id === userId
             ? { ...user, isEmailVerified: true, isActive: true }
             : user
         ));
-        
+
         // Update stats
         setStats(prev => ({
           ...prev,
           pendingVerifications: Math.max(0, prev.pendingVerifications - 1)
         }));
-        
-        alert(result.message);
+
+        alert(response.data.message);
       } else {
-        const error = await response.json();
-        alert(`Error: ${error.error}`);
+        alert(`Error: ${response.data.error}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error verifying doctor:', error);
-      alert('Failed to verify doctor');
+      alert(error.response?.data?.error || 'Failed to verify doctor');
     }
   };
 

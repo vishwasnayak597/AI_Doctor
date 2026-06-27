@@ -109,7 +109,6 @@ const DoctorSearch: React.FC<DoctorSearchProps> = ({
         setLoading(true);
         setError(null);
         
-        const token = localStorage.getItem('token');
         const response = await apiClient.get('/users/doctors');
 
         if (response.status !== 200) {

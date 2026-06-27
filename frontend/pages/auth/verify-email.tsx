@@ -9,6 +9,7 @@ import {
   ArrowPathIcon 
 } from '@heroicons/react/24/outline';
 import { useAuthContext } from '../../components/AuthProvider';
+import { apiClient } from '../../lib/api';
 
 const VerifyEmailPage: React.FC = () => {
   const router = useRouter();
@@ -38,24 +39,18 @@ const VerifyEmailPage: React.FC = () => {
     setResendMessage('');
     
     try {
-      const response = await fetch('/api/auth/resend-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: user.email }),
-      });
+      const response = await apiClient.post('/auth/resend-verification', { email: user.email });
 
-      const data = await response.json();
-      
-      if (response.ok) {
+      if (response.data.success) {
         setResendMessage('Verification email sent successfully! Please check your inbox.');
         setResendCount(prev => prev + 1);
       } else {
-        setResendMessage(data.message || 'Failed to resend verification email. Please try again.');
+        setResendMessage(response.data.error || 'Failed to resend verification email. Please try again.');
       }
-    } catch (error) {
-      setResendMessage('Network error. Please check your connection and try again.');
+    } catch (error: any) {
+      setResendMessage(
+        error.response?.data?.error || 'Network error. Please check your connection and try again.'
+      );
     } finally {
       setIsResending(false);
     }

@@ -192,9 +192,9 @@ const DoctorDashboard: React.FC = () => {
     if (!user) return;
     
     try {
-      const response = await apiClient.get('/notifications/count');
+      const response = await apiClient.get('/notifications/unread-count');
       if (response.data.success) {
-        setNotificationCount(response.data.data.count || 0);
+        setNotificationCount(response.data.data?.count || 0);
       }
     } catch (error) {
       console.error('Error fetching notification count:', error);

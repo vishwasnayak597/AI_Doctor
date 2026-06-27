@@ -296,6 +296,45 @@ export class AuthService {
   }
   
   /**
+   * Resend email verification token
+   */
+  static async resendVerificationEmail(email: string): Promise<ApiResponse> {
+    try {
+      const user = await User.findOne({ email: email.toLowerCase() });
+
+      // Always respond success to avoid leaking which emails are registered
+      if (!user) {
+        return {
+          success: true,
+          message: 'If an account with that email exists, a verification link has been sent.'
+        };
+      }
+
+      if (user.isEmailVerified) {
+        return {
+          success: false,
+          error: 'Email is already verified'
+        };
+      }
+
+      const verificationToken = generateEmailVerificationToken(user._id.toString(), user.email);
+      user.emailVerificationToken = verificationToken;
+      await user.save();
+
+      return {
+        success: true,
+        message: 'Verification email sent successfully. Please check your inbox.',
+        data: { verificationToken }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Failed to resend verification email'
+      };
+    }
+  }
+
+  /**
    * Request password reset
    */
   static async requestPasswordReset(email: string): Promise<ApiResponse> {

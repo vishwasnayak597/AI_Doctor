@@ -355,7 +355,7 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
             <div className="card-body">
               <h4 className="text-lg font-semibold text-gray-900 mb-3">Possible Conditions</h4>
               <ul className="space-y-2">
-                {analysisResult.possibleConditions.map((condition, index) => (
+                {(analysisResult.possibleConditions || []).map((condition, index) => (
                   <li key={index} className="flex items-center">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                     <span className="text-gray-700">{condition}</span>
@@ -397,7 +397,7 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
             <div className="card-body">
               <h4 className="text-lg font-semibold text-gray-900 mb-3">Recommendations</h4>
               <ul className="space-y-3">
-                {analysisResult.recommendations.map((recommendation, index) => (
+                {(analysisResult.recommendations || []).map((recommendation, index) => (
                   <li key={index} className="flex items-start">
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
                       <span className="text-green-600 text-xs font-semibold">{index + 1}</span>
@@ -414,7 +414,7 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
             <div className="card-body">
               <h4 className="text-lg font-semibold text-gray-900 mb-3">Next Steps</h4>
               <ul className="space-y-3 mb-4">
-                {analysisResult.nextSteps.map((step, index) => (
+                {(analysisResult.nextSteps || []).map((step, index) => (
                   <li key={index} className="flex items-start">
                     <ArrowRightIcon className="h-5 w-5 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
                     <span className="text-gray-700">{step}</span>

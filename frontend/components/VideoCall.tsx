@@ -190,9 +190,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
     try {
       if (callState.isRecording) {
         // Stop recording
-        const response = await apiClient.post(`/video-calls/${callId}/recording/stop`, {
-          recordingId: 'mock-recording-id'
-        });
+        const response = await apiClient.post(`/video-calls/${callId}/recording/mock-recording-id/stop`, {});
 
         if (response.data.success) {
           setCallState(prev => ({ ...prev, isRecording: false }));

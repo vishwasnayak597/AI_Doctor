@@ -317,6 +317,31 @@ router.post('/verify-email/:token', async (req: Request, res: Response<ApiRespon
 });
 
 /**
+ * Resend email verification
+ */
+router.post('/resend-verification', authLimiter, validatePasswordReset, async (req: Request, res: Response<ApiResponse>) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation failed',
+        data: errors.array()
+      });
+    }
+
+    const result = await AuthService.resendVerificationEmail(req.body.email);
+    const statusCode = result.success ? 200 : 400;
+    res.status(statusCode).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to resend verification email. Please try again.'
+    });
+  }
+});
+
+/**
  * Request password reset
  */
 router.post('/forgot-password', passwordResetLimiter, validatePasswordReset, async (req: Request, res: Response<ApiResponse>) => {

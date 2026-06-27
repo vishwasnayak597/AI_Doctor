@@ -406,10 +406,31 @@ const PatientDashboard: React.FC = () => {
     }
   };
 
+  // Download a report through the authenticated API client (window.open cannot send auth headers)
+  const handleDownloadReport = async (reportId: string, fileName: string) => {
+    try {
+      const response = await apiClient.get(`/reports/${reportId}/download`, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data as unknown as BlobPart]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName || 'report');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading report:', error);
+      alert('Failed to download report. Please try again.');
+    }
+  };
+
   // Remove report function
   const handleRemoveReport = async (reportId: string) => {
     try {
-      const response = await apiClient.delete(`/api/reports/${reportId}`);
+      const response = await apiClient.delete(`/reports/${reportId}`);
       
       if (response.data.success) {
         setUploadedReports(prev => prev.filter(report => report.id !== reportId));
@@ -1436,7 +1457,7 @@ const PatientDashboard: React.FC = () => {
                     </div>
                     <div className="flex space-x-2">
                       <button 
-                        onClick={() => window.open(`/api/reports/${report.id}/download`, '_blank')}
+                        onClick={() => handleDownloadReport(report.id, report.fileName)}
                         className="p-1 text-gray-400 hover:text-green-600 transition-colors"
                         title="Download"
                       >

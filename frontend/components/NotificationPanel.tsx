@@ -78,16 +78,10 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
   const fetchNotifications = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/notifications', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiClient.get('/notifications');
 
-      if (response.ok) {
-        const data = await response.json();
-        setNotifications(data.data.notifications);
+      if (response.data.success) {
+        setNotifications(response.data.data?.notifications || []);
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -98,16 +92,10 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
   const fetchUnreadCount = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/notifications/unread-count', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiClient.get('/notifications/unread-count');
 
-      if (response.ok) {
-        const data = await response.json();
-        setUnreadCount(data.data.count);
+      if (response.data.success) {
+        setUnreadCount(response.data.data?.count || 0);
       }
     } catch (error) {
       console.error('Error fetching unread count:', error);
@@ -134,13 +122,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
   const markAllAsRead = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await fetch('/api/notifications/mark-all-read', {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      await apiClient.patch('/notifications/mark-all-read', {});
 
       setNotifications(prev =>
         prev.map(notification => ({ ...notification, isRead: true }))
