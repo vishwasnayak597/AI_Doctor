@@ -4,6 +4,7 @@ import { useAuthContext } from '../../components/AuthProvider';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 import VideoCall from '../../components/VideoCall';
 import NotificationPanel from '../../components/NotificationPanel';
+import DoctorScheduleCalendar from '../../components/DoctorScheduleCalendar';
 import { apiClient } from '../../lib/api';
 import {
   UsersIcon,
@@ -80,7 +81,7 @@ const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'F
 
 const DoctorDashboard: React.FC = () => {
   const { user, logout } = useAuthContext();
-  const [activeTab, setActiveTab] = useState<'overview' | 'appointments' | 'patients' | 'profile'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'appointments' | 'schedule' | 'patients' | 'profile'>('overview');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalPatients: 0,
@@ -377,34 +378,6 @@ const DoctorDashboard: React.FC = () => {
     })));
   };
 
-  // Group this week's appointments by weekday (0=Sun..6=Sat) for the calendar view
-  const getCurrentWeekDays = () => {
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay()); // back to Sunday
-    startOfWeek.setHours(0, 0, 0, 0);
-
-    return DAYS_OF_WEEK.map((dayName, index) => {
-      const date = new Date(startOfWeek);
-      date.setDate(startOfWeek.getDate() + index);
-
-      const dayAppointments = (Array.isArray(appointments) ? appointments : [])
-        .filter((apt: any) => {
-          const apptDate = new Date(apt.appointmentDate);
-          return apptDate.toDateString() === date.toDateString();
-        })
-        .sort((a: any, b: any) =>
-          new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime());
-
-      return {
-        dayName,
-        date,
-        isToday: date.toDateString() === today.toDateString(),
-        availability: availability[index],
-        appointments: dayAppointments
-      };
-    });
-  };
 
   // Add/Update appointment notes
   const handleAddNotes = async (): Promise<void> => {
@@ -1222,6 +1195,22 @@ const DoctorDashboard: React.FC = () => {
     );
   };
 
+  // Schedule tab — week/month calendar of availability + appointments
+  const renderSchedule = () => (
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Schedule</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Your availability and booked appointments. Switch between week and month, or browse other dates.
+            Edit your available hours in the Profile tab.
+          </p>
+        </div>
+        <DoctorScheduleCalendar availability={availability} appointments={appointments} />
+      </div>
+    </div>
+  );
+
   // Profile management component
   const renderProfile = () => {
     const handleFeeSubmit = (e: React.FormEvent) => {
@@ -1406,65 +1395,6 @@ const DoctorDashboard: React.FC = () => {
             )}
           </div>
 
-          {/* This Week's Schedule — availability + appointments at a glance */}
-          <div className="border-b border-gray-200 pb-6 mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              <CalendarDaysIcon className="inline h-5 w-5 mr-2" />
-              This Week&apos;s Schedule
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Your availability and booked appointments for the current week.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
-              {getCurrentWeekDays().map((day) => {
-                const isAvailable = day.availability?.isAvailable;
-                return (
-                  <div
-                    key={day.dayName}
-                    className={`rounded-lg border p-3 min-h-[120px] flex flex-col ${
-                      day.isToday ? 'border-blue-500 ring-1 ring-blue-200 bg-blue-50' : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-gray-700">
-                        {day.dayName.slice(0, 3)}
-                      </span>
-                      <span className={`text-xs ${day.isToday ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
-                        {day.date.getDate()}
-                      </span>
-                    </div>
-
-                    {isAvailable ? (
-                      <span className="text-[11px] text-green-600 mb-2">
-                        {day.availability?.startTime}–{day.availability?.endTime}
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-gray-400 italic mb-2">Unavailable</span>
-                    )}
-
-                    <div className="flex-1 space-y-1">
-                      {day.appointments.length === 0 ? (
-                        <span className="text-[11px] text-gray-300">No appointments</span>
-                      ) : (
-                        day.appointments.map((apt: any) => (
-                          <div
-                            key={apt._id}
-                            className="text-[11px] px-1.5 py-1 rounded bg-blue-100 text-blue-800 truncate"
-                            title={`${apt.patient?.firstName || ''} ${apt.patient?.lastName || ''} — ${apt.status}`}
-                          >
-                            {new Date(apt.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}{' '}
-                            {apt.patient?.firstName || 'Patient'}
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Basic Profile Information */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Information</h3>
@@ -1558,6 +1488,7 @@ const DoctorDashboard: React.FC = () => {
               {[
                 { id: 'overview', label: 'Overview', icon: ChartBarIcon },
                 { id: 'appointments', label: 'Appointments', icon: CalendarDaysIcon },
+                { id: 'schedule', label: 'Schedule', icon: ClockIcon },
                 { id: 'patients', label: 'Patients', icon: UsersIcon },
                 { id: 'profile', label: 'Profile', icon: UserIcon }
               ].map((tab) => (
@@ -1582,6 +1513,7 @@ const DoctorDashboard: React.FC = () => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {activeTab === 'overview' && renderOverview()}
           {activeTab === 'appointments' && renderAppointments()}
+          {activeTab === 'schedule' && renderSchedule()}
           {activeTab === 'patients' && renderPatients()}
           {activeTab === 'profile' && renderProfile()}
         </main>
