@@ -40,7 +40,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
             },
             loading: {
               iconTheme: {
-                primary: '#3B82F6',
+                primary: '#E8765A',
                 secondary: '#fff',
               },
             },

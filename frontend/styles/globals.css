@@ -13,20 +13,24 @@
     @apply h-full;
   }
   body {
-    @apply h-full font-sans antialiased;
+    @apply h-full font-sans antialiased bg-cream text-gray-800;
+  }
+  /* Warm Wellness: serif display headings */
+  h1, h2, h3 {
+    @apply font-serif;
   }
 }
 
 /* Component styles */
 @layer components {
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply bg-coral-500 hover:bg-coral-600 text-white font-semibold py-2 px-5 rounded-full transition-colors;
   }
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-full transition-colors;
   }
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+    @apply w-full px-4 py-2.5 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-coral-400;
   }
 }
 
