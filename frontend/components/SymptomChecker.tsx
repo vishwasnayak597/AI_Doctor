@@ -1,5 +1,6 @@
 import React, { useState, useEffect , useRef} from 'react';
 import { apiClient } from '../lib/api';
+import TriageWizard from './TriageWizard';
 import {
   MicrophoneIcon,
   StopIcon,
@@ -60,6 +61,7 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
     timestamp: Date;
   }>>([]);
   const [error, setError] = useState(''); // Added error state
+  const [triageStarted, setTriageStarted] = useState(false); // new: trained-model sequential triage
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -275,26 +277,25 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
 
           <div className="mt-4 flex flex-col sm:flex-row gap-3">
             <button
-              onClick={analyzeSymptoms}
-              disabled={!symptoms.trim() || isAnalyzing}
+              onClick={() => symptoms.trim() && setTriageStarted(true)}
+              disabled={!symptoms.trim()}
               className="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isAnalyzing ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <SparklesIcon className="h-4 w-4 mr-2" />
-                  Analyze Symptoms
-                </>
-              )}
+              <SparklesIcon className="h-4 w-4 mr-2" />
+              Start AI Triage
             </button>
-            
-            {(symptoms || analysisResult) && (
+
+            <button
+              onClick={analyzeSymptoms}
+              disabled={!symptoms.trim() || isAnalyzing}
+              className="btn-secondary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isAnalyzing ? 'Analyzing...' : 'Classic analysis'}
+            </button>
+
+            {(symptoms || analysisResult || triageStarted) && (
               <button
-                onClick={clearAnalysis}
+                onClick={() => { clearAnalysis(); setTriageStarted(false); }}
                 className="btn-secondary"
               >
                 Clear & Start Over
@@ -304,8 +305,17 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
         </div>
       </div>
 
-      {/* AI Analysis Results */}
-      {analysisResult && (
+      {/* New: trained-model sequential triage (live-narrowing differential) */}
+      {triageStarted && (
+        <TriageWizard
+          symptoms={symptoms}
+          onFindDoctors={onFindDoctors}
+          onRestart={() => setTriageStarted(false)}
+        />
+      )}
+
+      {/* AI Analysis Results (classic one-shot path) */}
+      {!triageStarted && analysisResult && (
         <div className="space-y-6">
           {/* Severity Assessment */}
           <div className={`card border-2 ${SEVERITY_COLORS[analysisResult.severity]}`}>

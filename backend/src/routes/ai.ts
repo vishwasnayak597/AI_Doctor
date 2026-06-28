@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { AIService } from '../services/AIService';
 import { MCPService } from '../services/MCPService';
+import { startTriage, answerTriage, getTriageMeta } from '../services/TriageService';
 
 import { authenticate } from '../middleware/auth';
 
@@ -267,6 +268,63 @@ router.post('/symptom-checker-mcp', [
         fallbackSuggestion: 'All AI services are currently unavailable. Please consult a healthcare provider directly.'
       }
     });
+  }
+});
+
+/**
+ * GET /api/ai/triage/meta
+ * Model card: symptom vocab, diseases, and training metrics from the ML service.
+ */
+router.get('/triage/meta', authenticate, async (req: Request, res: Response) => {
+  try {
+    const meta = await getTriageMeta();
+    res.status(200).json({ success: true, data: meta });
+  } catch (error) {
+    console.error('Error fetching triage meta:', error);
+    res.status(503).json({ success: false, error: 'Triage model service unavailable' });
+  }
+});
+
+/**
+ * POST /api/ai/triage/start
+ * Begin a sequential triage session from free-text symptoms.
+ */
+router.post('/triage/start', [
+  authenticate,
+  body('symptoms').notEmpty().withMessage('Symptoms description is required').isLength({ min: 3, max: 2000 })
+], async (req: Request, res: Response) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: 'Validation failed', data: errors.array() });
+    }
+    const step = await startTriage(req.body.symptoms);
+    res.status(200).json({ success: true, data: step });
+  } catch (error) {
+    console.error('Error starting triage:', error);
+    res.status(503).json({ success: false, error: 'Triage model service unavailable. Please try again.' });
+  }
+});
+
+/**
+ * POST /api/ai/triage/answer
+ * Submit accumulated yes/no evidence; returns updated posterior + next best question.
+ */
+router.post('/triage/answer', [
+  authenticate,
+  body('evidence').isObject().withMessage('evidence must be an object of symptom -> 0|1'),
+  body('skip').optional().isArray()
+], async (req: Request, res: Response) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: 'Validation failed', data: errors.array() });
+    }
+    const step = await answerTriage(req.body.evidence, req.body.skip || []);
+    res.status(200).json({ success: true, data: step });
+  } catch (error) {
+    console.error('Error advancing triage:', error);
+    res.status(503).json({ success: false, error: 'Triage model service unavailable. Please try again.' });
   }
 });
 
