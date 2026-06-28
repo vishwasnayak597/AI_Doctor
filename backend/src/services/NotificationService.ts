@@ -244,10 +244,6 @@ export class NotificationService {
     // Mock email delivery for development
     // In production, integrate with services like SendGrid, SES, etc.
     
-    console.log(`📧 Email Notification Sent:`);
-    console.log(`To: ${notification.recipient}`);
-    console.log(`Subject: ${notification.title}`);
-    console.log(`Message: ${notification.message}`);
     
     await notification.markChannelAsDelivered('email');
     
@@ -267,9 +263,6 @@ export class NotificationService {
     // Mock SMS delivery for development
     // In production, integrate with services like Twilio, AWS SNS, etc.
     
-    console.log(`📱 SMS Notification Sent:`);
-    console.log(`To: ${notification.recipient}`);
-    console.log(`Message: ${notification.title} - ${notification.message}`);
     
     await notification.markChannelAsDelivered('sms');
     
@@ -287,10 +280,6 @@ export class NotificationService {
     // Mock push notification delivery for development
     // In production, integrate with FCM, APNS, etc.
     
-    console.log(`🔔 Push Notification Sent:`);
-    console.log(`To: ${notification.recipient}`);
-    console.log(`Title: ${notification.title}`);
-    console.log(`Body: ${notification.message}`);
     
     await notification.markChannelAsDelivered('push');
     
@@ -377,10 +366,6 @@ export class NotificationService {
     // This would typically get all active users and send them a notification
     // For now, it's a placeholder that shows the structure
     
-    console.log(`🔧 System Maintenance Notification:`);
-    console.log(`Message: ${message}`);
-    console.log(`Scheduled: ${scheduledDate}`);
-    console.log(`Excluded roles: ${excludeRoles.join(', ')}`);
     
     // TODO: Implement bulk notification to all users
     // const users = await User.find({ role: { $nin: excludeRoles }, isActive: true });

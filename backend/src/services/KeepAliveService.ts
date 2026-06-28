@@ -37,13 +37,9 @@ export class KeepAliveService {
    */
   static start(): void {
     if (this.interval) {
-      console.log('⚠️ Keep-alive service already running');
       return;
     }
 
-    console.log('🚀 Starting aiDoc Keep-Alive Service');
-    console.log(`📡 Ping interval: ${this.config.PING_INTERVAL / 60000} minutes`);
-    console.log(`🕒 Business hours: ${this.config.BUSINESS_HOURS.START}:00 - ${this.config.BUSINESS_HOURS.END}:00 UTC`);
 
     // Initial ping
     this.pingEndpoints();
@@ -61,7 +57,6 @@ export class KeepAliveService {
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
-      console.log('🛑 Keep-alive service stopped');
     }
   }
 
@@ -80,18 +75,15 @@ export class KeepAliveService {
     const timestamp = new Date().toISOString();
 
     if (!this.isBusinessHours()) {
-      console.log(`😴 [${timestamp}] Outside business hours - skipping ping`);
       return;
     }
 
-    console.log(`💓 [${timestamp}] Keep-alive ping...`);
 
     const results = await Promise.all(
       this.config.ENDPOINTS.map(url => this.pingSingleEndpoint(url))
     );
 
     const successCount = results.filter(Boolean).length;
-    console.log(`📊 [${timestamp}] ${successCount}/${this.config.ENDPOINTS.length} endpoints alive`);
   }
 
   /**
@@ -108,7 +100,6 @@ export class KeepAliveService {
           // Accept 200-499 (including 401 for auth endpoints)
           resolve(true);
         } else {
-          console.log(`⚠️ [${timestamp}] ${url} - Status: ${status}`);
           resolve(false);
         }
       });

@@ -36,7 +36,6 @@ router.post('/', [
       videoCallUrl: callData.callUrl
     });
 
-    console.log(`🎥 Doctor ${userId} started video call for appointment ${appointmentId}`);
     
     res.status(201).json({ success: true, data: callData, message: 'Video call created successfully' });
   } catch (error) {
@@ -201,7 +200,6 @@ router.post('/end-active', [authenticate], async (req: Request, res: Response) =
       }
     );
 
-    console.log(`🎥 Doctor ${userId} ended active video call for appointment ${activeCall._id}`);
     
     res.json({ 
       success: true, 

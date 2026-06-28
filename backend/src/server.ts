@@ -1,4 +1,3 @@
-console.log('🚀 Starting AI Doc Backend Server...');
 
 import 'dotenv/config';
 import 'express-async-errors';
@@ -22,11 +21,9 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
 
 async function startServer() {
   try {
-    console.log('✅ 1. Starting server initialization...');
     
     // Create Express app
     const app = express();
-    console.log('✅ 2. Express app created');
     
     // Setup CORS - this fixes your CORS issue!
     const corsOptions = {
@@ -46,8 +43,6 @@ async function startServer() {
         if (allowedOrigins.indexOf(origin) !== -1) {
           callback(null, true);
         } else {
-          console.log('🚫 CORS blocked origin:', origin);
-          console.log('🔍 Allowed origins:', allowedOrigins);
           callback(new Error('Not allowed by CORS'));
         }
       },
@@ -59,11 +54,9 @@ async function startServer() {
       preflightContinue: false
     };
     app.use(cors(corsOptions));
-    console.log('✅ 3. CORS configured with multiple origins');
     
     // Debug all requests
     app.use((req, res, next) => {
-      console.log(`🔍 Request: ${req.method} ${req.path} from ${req.headers.origin || 'no-origin'}`);
       next();
     });
     
@@ -73,20 +66,17 @@ async function startServer() {
       crossOriginEmbedderPolicy: false,
       crossOriginResourcePolicy: { policy: "cross-origin" }
     }));
-    console.log('✅ 4. Security middleware configured');
     
     // Request parsing middleware
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     app.use(cookieParser());
     app.use(compression());
-    console.log('✅ 5. Request parsing middleware configured');
     
     // Logging middleware
     if (NODE_ENV !== 'test') {
       app.use(morgan('combined', { stream: morganStream }));
     }
-    console.log('✅ 6. Logging middleware configured');
     
     // Rate limiting - Very permissive for development
     const globalRateLimit = rateLimit({
@@ -104,7 +94,6 @@ async function startServer() {
       }
     });
     app.use(globalRateLimit);
-    console.log('✅ 7. Rate limiting configured (disabled for development)');
     
     // Health check route (before database connection)
     app.get('/health', (req, res) => {
@@ -118,15 +107,11 @@ async function startServer() {
         keepAlive: KeepAliveService.getStatus()
       });
     });
-    console.log('✅ 8. Health check route configured');
     
     // Connect to database
-    console.log('🔌 9. Connecting to database...');
     await Database.connect();
-    console.log('✅ 9. Database connected successfully');
     
     // Import and setup routes AFTER database connection
-    console.log('📝 10. Loading API routes...');
     try {
       const authRoutes = await import('./routes/auth');
       const aiRoutes = await import('./routes/ai');
@@ -157,7 +142,6 @@ async function startServer() {
       app.use('/api/prescriptions', prescriptionRoutes.default);
       app.use('/api/reports', reportRoutes.default);
       app.use('/api/admin', adminSpecializationRoutes.default);
-      console.log('✅ 10. API routes loaded and configured successfully');
     } catch (routeError) {
       console.error('❌ Error loading routes:', routeError);
       throw routeError;
@@ -200,34 +184,24 @@ async function startServer() {
     // Error handling middleware (must be last)
     app.use(notFoundHandler);
     app.use(errorHandler);
-    console.log('✅ 11. Error handling middleware configured');
     
     // Start HTTP server
-    console.log('🎯 12. Starting HTTP server...');
     
     // Wrap app.listen in a Promise to ensure async function waits
     await new Promise<void>((resolve, reject) => {
       const server = app.listen(PORT, () => {
-        console.log(`✅ 13. Server running on port ${PORT} in ${NODE_ENV} mode`);
-        console.log(`✅ Health check: http://localhost:${PORT}/health`);
-        console.log(`✅ CORS enabled for: https://ai-doctor-qc2b.onrender.com, localhost origins, and ${CLIENT_URL || 'CLIENT_URL not set'}`);
-        console.log('🎉 AI Doc Backend Server is ready!');
-        console.log('🔥 You can now test your curl request!');
         logger.info(`Server running on port ${PORT} in ${NODE_ENV} mode`);
         logger.info(`Health check: http://localhost:${PORT}/health`);
         
         // Keep server alive with periodic heartbeat
         const heartbeat = setInterval(() => {
-          console.log(`❤️ Server heartbeat - ${new Date().toISOString()}`);
         }, 60000); // Every minute
         
         // Graceful shutdown handlers
         const gracefulShutdown = (signal: string) => {
-          console.log(`${signal} signal received: closing HTTP server`);
           clearInterval(heartbeat);
           KeepAliveService.stop();
           server.close(() => {
-            console.log('HTTP server closed');
             Database.disconnect?.();
             process.exit(0);
           });
@@ -252,7 +226,6 @@ async function startServer() {
         // Start keep-alive service to prevent cold starts
         KeepAliveService.start();
         
-        console.log('🔥 Server startup completed successfully!');
         resolve(); // Resolve the Promise now that server is listening
       });
       
@@ -273,11 +246,8 @@ async function startServer() {
 
 // Start the server
 if (require.main === module) {
-  console.log('Starting AI Doc Backend Server...');
   startServer()
     .then(() => {
-      console.log('🎉 Server startup completed successfully');
-      console.log('🎯 Server is now running and ready to accept requests');
       // Keep the process alive - the server is now listening
     })
     .catch(error => {

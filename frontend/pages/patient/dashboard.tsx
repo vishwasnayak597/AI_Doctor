@@ -500,7 +500,6 @@ const PatientDashboard: React.FC = () => {
       
       if (response.data.success && response.data.data) {
         const activeCall = response.data.data;
-        console.log('🎥 Active video call found:', activeCall);
         setActiveVideoCallInvitation(activeCall);
         
         // Clear any existing timeout
@@ -510,7 +509,6 @@ const PatientDashboard: React.FC = () => {
         
         // Set 5-minute timeout to auto-dismiss popup
         videoCallTimeoutRef.current = setTimeout(() => {
-          console.log('⏰ Video call invitation timed out after 5 minutes');
           setActiveVideoCallInvitation(null);
           videoCallTimeoutRef.current = null;
         }, 5 * 60 * 1000); // 5 minutes in milliseconds
@@ -650,20 +648,11 @@ const PatientDashboard: React.FC = () => {
   };
 
   const handleJoinVideoCall = (appointment: Appointment) => {
-    console.log('🚀 PATIENT JOIN CALL CLICKED!');
-    console.log('🚀 PATIENT JOIN CALL CLICKED:', { 
-      appointmentId: appointment._id,
-      videoCallLink: appointment.videoCallLink,
-      timestamp: new Date().toISOString()
-    });
-    
     if (appointment.videoCallLink) {
-      console.log('📞 Using existing video call link (same tab):', appointment.videoCallLink);
       window.location.href = appointment.videoCallLink;
     } else {
       // Generate video call link if not exists (using URL parameters)
       const callLink = `/video-call?id=${appointment._id}`;
-      console.log('📞 Using generated video call link (same tab):', callLink);
       window.location.href = callLink;
     }
   };
@@ -1666,15 +1655,7 @@ const PatientDashboard: React.FC = () => {
 
   // Handle joining active video call
   const handleJoinActiveVideoCall = (callData: any) => {
-    console.log('🚀 PATIENT JOIN ACTIVE CALL!');
-    console.log('🚀 PATIENT JOIN ACTIVE CALL:', { 
-      appointmentId: callData.appointmentId,
-      doctorName: callData.doctorName,
-      timestamp: new Date().toISOString()
-    });
-    
     const callLink = `/video-call?id=${callData.appointmentId}`;
-    console.log('📞 Joining active video call (same tab):', callLink);
     window.location.href = callLink;
     
     // Clear timeout when joining call

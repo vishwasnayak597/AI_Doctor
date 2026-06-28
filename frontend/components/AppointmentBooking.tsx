@@ -163,14 +163,12 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         paymentStatus: 'pending'
       };
 
-      console.log('📋 Creating appointment with data:', appointmentPayload);
       
       // First create the appointment to get real ID
       const response = await apiClient.post('/appointments', appointmentPayload);
 
       if (response.data.success) {
         const createdAppointment = response.data.data;
-        console.log('✅ Appointment created successfully:', createdAppointment);
         
         setAppointmentData(appointmentPayload);
         setCreatedAppointmentId(createdAppointment._id || createdAppointment.id);

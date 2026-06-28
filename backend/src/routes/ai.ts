@@ -165,7 +165,6 @@ router.post('/analyze-and-recommend', [
 
     const { symptoms, age, gender, medicalHistory, location } = req.body;
 
-    console.log('🔍 Starting combined analysis for symptoms:', symptoms);
 
     // Analyze symptoms and get doctor recommendations in parallel
     const [analysis, recommendations] = await Promise.all([
@@ -178,7 +177,6 @@ router.post('/analyze-and-recommend', [
       AIService.recommendDoctors(symptoms, location)
     ]);
 
-    console.log('✅ Analysis complete. Recommended specializations:', recommendations);
 
     const response: ApiResponse<any> = {
       success: true,
@@ -221,11 +219,9 @@ router.post('/symptom-checker-mcp', [
 
     const { symptoms, age, gender, medicalHistory } = req.body;
     
-    console.log('🧠 Processing intelligent symptom analysis with fallback:', { symptoms: symptoms.substring(0, 50) + '...' });
     
     const result = await MCPService.analyzeWithFallback(symptoms, { age, gender, medicalHistory });
 
-    console.log(`✅ Analysis complete using ${result.processingMethod} (Cost: ${result.costUsed})`);
     
     // Add UI feedback about which method was used
     const uiFeedback = {

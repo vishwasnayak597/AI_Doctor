@@ -115,7 +115,6 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
       // NEW: Try MCP-based analysis first, fallback to original if needed
       let response;
       try {
-        console.log('🔧 Attempting MCP-based symptom analysis...');
         
         // Build request payload - only include non-null values to avoid validation errors
         const requestPayload: any = {
@@ -128,12 +127,10 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
         // TODO: Add gender input in UI later  
         // TODO: Add medical history input in UI later
         
-        console.log('📋 MCP Request payload:', requestPayload);
         
         // Use enhanced MCP endpoint with intelligent fallback (OpenAI → Local)
         response = await apiClient.post('/ai/symptom-checker-mcp', requestPayload);
 
-        console.log('✅ MCP Analysis successful:', response.data);
         
         // Handle MCP response structure
         if (response.data.success && response.data.data) {
@@ -156,19 +153,15 @@ const SymptomChecker: React.FC<SymptomCheckerProps> = ({
 
           // Show normalization info if available
           if (mcpData.normalization && mcpData.normalization.possibleTypos?.length > 0) {
-            console.log('🔤 Detected typos:', mcpData.normalization.possibleTypos);
           }
 
           // Show UI feedback about which AI method was used
           if (mcpData.meta?.uiFeedback) {
             const feedback = mcpData.meta.uiFeedback;
             if (feedback.fallbackUsed) {
-              console.log(`⚠️ Fallback used: ${feedback.methodDescription}`);
               if (feedback.fallbackReason) {
-                console.log(`📝 Reason: ${feedback.fallbackReason}`);
               }
             } else {
-              console.log(`✅ Primary AI used: ${feedback.methodDescription}`);
             }
           }
 

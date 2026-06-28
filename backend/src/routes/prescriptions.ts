@@ -24,15 +24,6 @@ router.post('/', auth, async (req, res) => {
       validTill
     } = req.body;
 
-    console.log('🔧 Creating prescription with data:', {
-      patient,
-      doctor: req.user!._id,
-      appointment,
-      medications: medications?.length || 0,
-      generalInstructions: generalInstructions ? 'Provided' : 'Not provided',
-      validTill
-    });
-
     const prescription = new Prescription({
       patient,
       doctor: req.user!._id,
@@ -42,11 +33,9 @@ router.post('/', auth, async (req, res) => {
       validTill
     });
 
-    console.log('🔧 Before save - prescriptionNumber:', prescription.prescriptionNumber);
     
     await prescription.save();
     
-    console.log('✅ Prescription saved successfully - prescriptionNumber:', prescription.prescriptionNumber);
     
     await prescription.populate([
       { path: 'patient', select: 'firstName lastName email' },

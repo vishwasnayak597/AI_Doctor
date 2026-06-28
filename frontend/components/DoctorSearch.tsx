@@ -147,7 +147,6 @@ const DoctorSearch: React.FC<DoctorSearchProps> = ({
 
         // If no doctors from API, use mock data
         if (transformedDoctors.length === 0) {
-          console.log('No doctors found in API, using mock data');
           // setDoctors(MOCK_DOCTORS); // This line is removed as per the edit hint
         } else {
           setDoctors(transformedDoctors);
@@ -175,7 +174,6 @@ const DoctorSearch: React.FC<DoctorSearchProps> = ({
           });
         },
         (error) => {
-          console.log('Location access denied:', error);
         }
       );
     }

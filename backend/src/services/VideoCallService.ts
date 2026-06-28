@@ -115,8 +115,6 @@ export class VideoCallService {
       ]
     };
 
-    console.log(`📹 Video call ended: ${callId}`);
-    console.log(`Duration: ${session.duration} minutes`);
     
     return session;
   }
@@ -192,12 +190,6 @@ export class VideoCallService {
     const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const callUrl = `${baseUrl}/video-call/${appointmentId}`;
 
-    console.log(`🎥 Mock Video Call Created:`);
-    console.log(`Call ID: ${callId}`);
-    console.log(`Appointment ID: ${appointmentId}`);
-    console.log(`Room ID: ${roomId}`);
-    console.log(`Call URL: ${callUrl}`);
-    console.log(`Expires: ${expiresAt}`);
 
     return {
       callId,
@@ -209,7 +201,6 @@ export class VideoCallService {
 
   private static async generateMockToken(callId: string, userId: string, role: 'host' | 'guest'): Promise<string> {
     const token = `mock_${role}_${userId}_${callId}_${Date.now()}`;
-    console.log(`🎫 Mock Token Generated: ${token}`);
     return token;
   }
 
@@ -221,9 +212,6 @@ export class VideoCallService {
     // 2. Generating host and guest tokens
     // 3. Setting up recording if needed
     
-    console.log(`🎥 Agora Video Call would be created here`);
-    console.log(`App ID: ${this.provider.appId}`);
-    console.log(`Channel: ${roomId}`);
     
     const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const callUrl = `${baseUrl}/video-call/agora/${callId}`;
@@ -257,7 +245,6 @@ export class VideoCallService {
   // Twilio Video implementation
   private static async createTwilioCall(callId: string, roomId: string, expiresAt: Date): Promise<VideoCallData> {
     // TODO: Implement Twilio Video room creation
-    console.log(`🎥 Twilio Video Room would be created here`);
     
     const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const callUrl = `${baseUrl}/video-call/twilio/${callId}`;
@@ -281,9 +268,6 @@ export class VideoCallService {
     const jitsiDomain = process.env.JITSI_DOMAIN || 'meet.jit.si';
     const callUrl = `https://${jitsiDomain}/${roomId}`;
 
-    console.log(`🎥 Jitsi Meet Room Created:`);
-    console.log(`Room: ${roomId}`);
-    console.log(`URL: ${callUrl}`);
 
     return {
       callId,
@@ -301,7 +285,6 @@ export class VideoCallService {
   // Zoom implementation
   private static async createZoomCall(callId: string, roomId: string, expiresAt: Date): Promise<VideoCallData> {
     // TODO: Implement Zoom meeting creation using Zoom API
-    console.log(`🎥 Zoom Meeting would be created here`);
     
     return {
       callId,
@@ -321,7 +304,6 @@ export class VideoCallService {
    */
   static async validateCall(callId: string): Promise<boolean> {
     // In a real implementation, this would check if the call exists and is still valid
-    console.log(`✅ Validating call: ${callId}`);
     return true;
   }
 
@@ -330,7 +312,6 @@ export class VideoCallService {
    */
   static async startRecording(callId: string): Promise<{ recordingId: string; recordingUrl?: string }> {
     const recordingId = `rec_${callId}_${Date.now()}`;
-    console.log(`🔴 Recording started for call: ${callId}, Recording ID: ${recordingId}`);
     
     return {
       recordingId,
@@ -342,7 +323,6 @@ export class VideoCallService {
    * Stop recording
    */
   static async stopRecording(callId: string, recordingId: string): Promise<{ recordingUrl: string; duration: number }> {
-    console.log(`⏹️ Recording stopped for call: ${callId}, Recording ID: ${recordingId}`);
     
     return {
       recordingUrl: `https://recordings.example.com/${recordingId}`,
@@ -355,9 +335,6 @@ export class VideoCallService {
    */
   static async sendCallInvitation(callData: VideoCallData, participants: Array<{ email: string; role: 'host' | 'guest' }>): Promise<void> {
     for (const participant of participants) {
-      console.log(`📧 Video call invitation sent to: ${participant.email}`);
-      console.log(`Role: ${participant.role}`);
-      console.log(`Join URL: ${callData.callUrl}`);
       
       // In production, this would send actual email invitations
     }

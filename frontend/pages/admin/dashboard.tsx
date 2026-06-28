@@ -723,7 +723,6 @@ const AdminDashboard: React.FC = () => {
         isOpen={showNotifications}
         onClose={() => setShowNotifications(false)}
         onNotificationClick={(notification) => {
-          console.log('Notification clicked:', notification);
         }}
       />
 

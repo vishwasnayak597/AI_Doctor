@@ -48,11 +48,9 @@ const FEES_BY_SPECIALIZATION = {
  */
 router.post('/redistribute-specializations', async (req: Request, res: Response) => {
   try {
-    console.log('🏥 Starting specialization redistribution...');
     
     // Find all doctors
     const doctors = await User.find({ role: 'doctor' });
-    console.log(`📋 Found ${doctors.length} doctors in database`);
     
     if (doctors.length === 0) {
       return res.json({
@@ -66,9 +64,6 @@ router.post('/redistribute-specializations', async (req: Request, res: Response)
     const doctorsPerSpecialization = Math.floor(doctors.length / SPECIALIZATIONS.length);
     const extraDoctors = doctors.length % SPECIALIZATIONS.length;
     
-    console.log(`📊 Distribution plan:`);
-    console.log(`   - ${doctorsPerSpecialization} doctors per specialization`);
-    console.log(`   - ${extraDoctors} specializations will get 1 extra doctor`);
     
     // Shuffle doctors array to ensure random distribution
     const shuffledDoctors = doctors.sort(() => Math.random() - 0.5);
@@ -85,7 +80,6 @@ router.post('/redistribute-specializations', async (req: Request, res: Response)
       
       distribution[specialization] = doctorCount;
       
-      console.log(`\n🏥 Assigning ${doctorCount} doctors to ${specialization} (Fee: ₹${fee})`);
       
       for (let j = 0; j < doctorCount; j++) {
         if (doctorIndex < shuffledDoctors.length) {
@@ -102,13 +96,11 @@ router.post('/redistribute-specializations', async (req: Request, res: Response)
           await User.findByIdAndUpdate(doctor._id, updateData);
           updatedCount++;
           
-          console.log(`   ✓ ${doctor.firstName} ${doctor.lastName} (${doctor.email})`);
           doctorIndex++;
         }
       }
     }
     
-    console.log(`✅ Successfully updated ${updatedCount} doctors`);
     
     res.json({
       success: true,

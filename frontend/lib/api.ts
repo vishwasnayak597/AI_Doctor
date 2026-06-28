@@ -2,8 +2,6 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { ApiResponse } from '../../shared/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://aidoc.onrender.com/api';
-console.log('🔧 DEBUG - API_BASE_URL:', API_BASE_URL);
-console.log('🔧 DEBUG - NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
 const REQUEST_TIMEOUT = 30000;
 
 interface TokenRefreshResponse {
@@ -41,16 +39,10 @@ class ApiClient {
     this.axiosInstance.interceptors.request.use(
       (config) => {
         const token = this.getAccessToken();
-        console.log('🔑 API Client Debug:');
-        console.log('Token from localStorage:', token ? `${token.substring(0, 20)}...` : 'null');
-        console.log('Request URL:', config.url);
-        console.log('Request Method:', config.method?.toUpperCase());
         
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
-          console.log('✅ Authorization header set');
         } else {
-          console.log('❌ No token found - request will be unauthenticated');
         }
         return config;
       },

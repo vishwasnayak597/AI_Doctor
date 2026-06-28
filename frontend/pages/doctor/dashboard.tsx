@@ -129,36 +129,25 @@ const DoctorDashboard: React.FC = () => {
   // Fetch appointments with useCallback to prevent re-creation
   const fetchAppointments = useCallback(async (): Promise<void> => {
     if (!user) {
-      console.log('👤 No user found, skipping appointments fetch');
       return;
     }
 
-    console.log('🔍 **DOCTOR DASHBOARD DEBUG**');
-    console.log('User ID:', (user as any)?._id || (user as any)?.id);
-    console.log('User Role:', user.role);
-    console.log('User Email:', user.email);
 
     try {
       setLoading(true);
-      console.log('📞 Making API call to /appointments...');
       
       const response = await apiClient.get('/appointments');
-      console.log('✅ API Response received:', response.data);
 
       // Fix: The appointments are nested in response.data.data.appointments
       const appointmentsData = response.data.success 
         ? response.data.data.appointments  // ← Fixed: Extract the appointments array
         : (response.data || []);
 
-      console.log('📊 Appointments data structure:', response.data.data);
-      console.log('📋 Extracted appointments:', appointmentsData);
 
       const finalAppointments = Array.isArray(appointmentsData) 
         ? appointmentsData 
         : [];
 
-      console.log('📋 Final appointments count:', finalAppointments.length);
-      console.log('📋 Final appointments:', finalAppointments);
 
       setAppointments(finalAppointments);
     } catch (error) {
@@ -637,7 +626,6 @@ const DoctorDashboard: React.FC = () => {
       const response = await apiClient.post('/video-calls', { appointmentId });
 
       if (response.data.success) {
-        console.log('✅ Video call started successfully');
       }
     } catch (error) {
       console.error('Error starting video call:', error);
