@@ -122,6 +122,8 @@ secrets/
 .dockerignore
 Dockerfile
 docker-compose.yml
+# ...but the ML service's Dockerfile must be tracked so Render can build it
+!ml-service/Dockerfile
 
 # Backup files
 *.bak
